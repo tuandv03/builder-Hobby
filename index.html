@@ -1,14 +1,67 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/placeholder.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Hello world project</title>
+    
+    <!-- SEO Meta Tags -->
+    <title>DuelMaster - Premium Yu-Gi-Oh! Cards | Blue-Eyes Collection</title>
+    <meta name="description" content="Discover premium Yu-Gi-Oh! cards at DuelMaster. Featuring the complete Blue-Eyes archetype collection with authentic cards, real-time pricing, and expert support." />
+    <meta name="keywords" content="yu-gi-oh, yugioh, cards, blue-eyes, trading cards, tcg, collectible cards, card shop, duel monsters" />
+    <meta name="author" content="DuelMaster" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://duelmaster.com/" />
+    <meta property="og:title" content="DuelMaster - Premium Yu-Gi-Oh! Cards" />
+    <meta property="og:description" content="Discover premium Yu-Gi-Oh! cards at DuelMaster. Featuring the complete Blue-Eyes archetype collection with authentic cards and real-time pricing." />
+    <meta property="og:image" content="/placeholder.svg" />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://duelmaster.com/" />
+    <meta property="twitter:title" content="DuelMaster - Premium Yu-Gi-Oh! Cards" />
+    <meta property="twitter:description" content="Discover premium Yu-Gi-Oh! cards at DuelMaster. Featuring the complete Blue-Eyes archetype collection with authentic cards and real-time pricing." />
+    <meta property="twitter:image" content="/placeholder.svg" />
+    
+    <!-- Additional SEO -->
+    <meta name="robots" content="index, follow" />
+    <meta name="googlebot" content="index, follow" />
+    <link rel="canonical" href="https://duelmaster.com/" />
+    
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Store",
+      "name": "DuelMaster",
+      "description": "Premium Yu-Gi-Oh! card shop specializing in Blue-Eyes archetype and collectible trading cards",
+      "url": "https://duelmaster.com",
+      "logo": "/placeholder.svg",
+      "sameAs": [
+        "https://twitter.com/duelmaster",
+        "https://instagram.com/duelmaster"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Yu-Gi-Oh! Cards",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Product",
+              "name": "Blue-Eyes White Dragon",
+              "category": "Trading Card Game"
+            }
+          }
+        ]
+      }
+    }
+    </script>
   </head>
-
   <body>
     <div id="root"></div>
-
     <script type="module" src="/client/App.tsx"></script>
   </body>
 </html>

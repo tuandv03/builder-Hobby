@@ -5,7 +5,7 @@ import CardItem from "@/components/CardItem";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Star, TrendingUp, Users, Package } from "lucide-react";
+import { Loader2, Star, TrendingUp, Users, Package, ArrowUp } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Index() {
@@ -37,6 +37,11 @@ export default function Index() {
 
   const featuredCards = cards.slice(0, 8);
   const heroCard = cards.find(card => card.name.includes("Blue-Eyes White Dragon")) || cards[0];
+
+  // Back to top handler
+  const handleBackToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <Layout>
@@ -218,6 +223,18 @@ export default function Index() {
           </div>
         </div>
       </section>
+
+      {/* Back to Top Button */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <Button
+          size="icon"
+          className="bg-primary text-white rounded-full shadow-lg hover:bg-primary/80 transition"
+          onClick={handleBackToTop}
+          aria-label="Back to top"
+        >
+          <ArrowUp className="w-6 h-6" />
+        </Button>
+      </div>
     </Layout>
   );
 }

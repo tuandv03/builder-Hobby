@@ -12,6 +12,7 @@ import Cards from "./pages/Cards";
 import Archetypes from "./pages/Archetypes";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
+import Order from "./pages/Order";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/cards" element={<Cards />} />
           <Route path="/archetypes" element={<Archetypes />} />
           <Route path="/about" element={<About />} />
+           <Route path="/order" element={<Order />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

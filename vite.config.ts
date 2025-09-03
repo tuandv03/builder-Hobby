@@ -12,6 +12,9 @@ export default defineConfig(({ mode }) => ({
       allow: ["./client", "./shared"],
       deny: [".env", ".env.*", "*.{crt,pem}", "**/.git/**", "server/**"],
     },
+    proxy: {
+      "/api": "http://localhost:3000", // backend Express
+    },
   },
   build: {
     outDir: "dist/spa",

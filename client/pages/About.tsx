@@ -1,9 +1,5 @@
 import Layout from "@/components/Layout";
 import { useState, useRef } from "react";
-// Thêm import Firebase
-import { initializeApp } from "firebase/app";
-import { getDatabase, ref, push } from "firebase/database";
-import * as XLSX from "xlsx";
 
 // Cấu hình Firebase (thay bằng config thật của bạn)
 const firebaseConfig = {
@@ -15,7 +11,6 @@ const firebaseConfig = {
   appId: "1:996067939631:web:0264ea508941042d4abdda",
   measurementId: "G-S0D5BVWQ0B"
 };
-const app = initializeApp(firebaseConfig);
 
 interface OrderData {
   orderDetails: string;

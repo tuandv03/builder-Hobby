@@ -13,6 +13,8 @@ import Archetypes from "./pages/Archetypes";
 import About from "./pages/About";
 import NotFound from "./pages/NotFound";
 import Order from "./pages/Order";
+import CardInput from "./pages/CardMarket/CardInput";
+import CardPrice from "./pages/CardMarket/CardPrice";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +31,8 @@ const App = () => (
           <Route path="/archetypes" element={<Archetypes />} />
           <Route path="/about" element={<About />} />
            <Route path="/order" element={<Order />} />
+           <Route path="/cardInput" element={<CardInput />} />
+           <Route path="/cardPrice" element={<CardPrice />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

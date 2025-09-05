@@ -19,6 +19,7 @@ export default function Layout({ children }: LayoutProps) {
     { href: "/", label: "Home", active: location.pathname === "/" },
     { href: "/cards", label: "All Cards", active: location.pathname === "/cards" },
     { href: "/archetypes", label: "Archetypes", active: location.pathname === "/archetypes" },
+    { href: "/inventory", label: "Inventory", active: location.pathname === "/inventory" },
     { href: "/about", label: "About", active: location.pathname === "/about" },
   ];
 

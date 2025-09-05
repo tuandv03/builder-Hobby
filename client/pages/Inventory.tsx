@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Loader2, Save, Search } from "lucide-react";
 import { YugiohCard, ApiResponse } from "@shared/types";
 
@@ -17,6 +18,8 @@ export default function Inventory() {
   const [searchTerm, setSearchTerm] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
   const [rarity, setRarity] = useState<string>("all");
+  const [page, setPage] = useState<number>(1);
+  const [pageSize, setPageSize] = useState<number>(20);
 
   // inventory from server: `${id}::${rarity}` -> quantity
   const [inventory, setInventory] = useState<Record<string, number>>({});
@@ -95,6 +98,29 @@ export default function Inventory() {
       return nameOk && rarityOk;
     });
   }, [rows, appliedSearch, rarity]);
+
+  const total = filteredRows.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const start = Math.min((page - 1) * pageSize, Math.max(0, (totalPages - 1) * pageSize));
+  const end = Math.min(total, start + pageSize);
+  const pageRows = useMemo(() => filteredRows.slice(start, start + pageSize), [filteredRows, start, pageSize]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [appliedSearch, rarity]);
+
+  useEffect(() => {
+    if (page > totalPages) setPage(totalPages);
+  }, [totalPages, page]);
+
+  const pagesToShow = useMemo(() => {
+    const arr: number[] = [];
+    const range = 2;
+    const s = Math.max(1, page - range);
+    const e = Math.min(totalPages, page + range);
+    for (let p = s; p <= e; p++) arr.push(p);
+    return arr;
+  }, [page, totalPages]);
 
   const handleApplySearch = () => setAppliedSearch(searchTerm);
 
@@ -212,7 +238,7 @@ export default function Inventory() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredRows.map((row) => (
+                {pageRows.map((row) => (
                   <TableRow key={row.key}>
                     <TableCell className="font-medium">{row.id}</TableCell>
                     <TableCell>
@@ -246,6 +272,40 @@ export default function Inventory() {
                 ))}
               </TableBody>
             </Table>
+            <div className="flex items-center justify-between px-4 py-3">
+              <div className="text-sm text-muted-foreground">
+                Hiển thị {total === 0 ? 0 : start + 1}–{end} / Tổng {total}
+              </div>
+              <div className="flex items-center gap-3">
+                <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+                  <SelectTrigger className="w-32">
+                    <SelectValue placeholder="Kích thước trang" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="10">10 / trang</SelectItem>
+                    <SelectItem value="20">20 / trang</SelectItem>
+                    <SelectItem value="50">50 / trang</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); setPage(Math.max(1, page - 1)); }} />
+                    </PaginationItem>
+                    {pagesToShow.map((p) => (
+                      <PaginationItem key={p}>
+                        <PaginationLink href="#" isActive={p === page} onClick={(e) => { e.preventDefault(); setPage(p); }}>
+                          {p}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
+                    <PaginationItem>
+                      <PaginationNext href="#" onClick={(e) => { e.preventDefault(); setPage(Math.min(totalPages, page + 1)); }} />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+              </div>
+            </div>
           </div>
         )}
       </div>

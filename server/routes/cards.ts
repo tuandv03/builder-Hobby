@@ -21,9 +21,13 @@ export const getCards: RequestHandler = async (req, res) => {
   try {
     const archetype = (req.query.archetype as string) ?? "Blue-Eyes";
     const url = `${YGO_BASE}/cardinfo.php?archetype=${encodeURIComponent(archetype)}`;
-    const response = await withTimeout(fetch(url, { headers: { "accept": "application/json" } }));
+    const response = await withTimeout(
+      fetch(url, { headers: { accept: "application/json" } }),
+    );
     if (!response.ok) {
-      return res.status(502).json({ error: "Upstream error", status: response.status });
+      return res
+        .status(502)
+        .json({ error: "Upstream error", status: response.status });
     }
     const data = await response.json();
     res.json(data);
@@ -37,9 +41,13 @@ export const getCardById: RequestHandler = async (req, res) => {
     const id = req.query.id as string;
     if (!id) return res.status(400).json({ error: "Missing id" });
     const url = `${YGO_BASE}/cardinfo.php?id=${encodeURIComponent(id)}`;
-    const response = await withTimeout(fetch(url, { headers: { "accept": "application/json" } }));
+    const response = await withTimeout(
+      fetch(url, { headers: { accept: "application/json" } }),
+    );
     if (!response.ok) {
-      return res.status(502).json({ error: "Upstream error", status: response.status });
+      return res
+        .status(502)
+        .json({ error: "Upstream error", status: response.status });
     }
     const data = await response.json();
     res.json(data);

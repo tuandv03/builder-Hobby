@@ -18,7 +18,8 @@ export const updateInventory: RequestHandler = (req, res) => {
   const applied: Record<string, number> = {};
   for (const [key, value] of Object.entries(updates)) {
     const keyStr = String(key);
-    const qtyNum = typeof value === "string" ? Number(value) : (value as number);
+    const qtyNum =
+      typeof value === "string" ? Number(value) : (value as number);
 
     if (!keyStr || typeof keyStr !== "string") continue;
     if (!Number.isFinite(qtyNum) || qtyNum < 0) continue;

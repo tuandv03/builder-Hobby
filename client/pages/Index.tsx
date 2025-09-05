@@ -5,7 +5,14 @@ import CardItem from "@/components/CardItem";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Star, TrendingUp, Users, Package, ArrowUp } from "lucide-react";
+import {
+  Loader2,
+  Star,
+  TrendingUp,
+  Users,
+  Package,
+  ArrowUp,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 export default function Index() {
@@ -21,7 +28,7 @@ export default function Index() {
     try {
       setLoading(true);
       const response = await fetch("/api/cards?archetype=Blue-Eyes");
-      
+
       if (!response.ok) {
         throw new Error("Failed to fetch cards");
       }
@@ -36,7 +43,9 @@ export default function Index() {
   };
 
   const featuredCards = cards.slice(0, 12);
-  const heroCard = cards.find(card => card.name.includes("Blue-Eyes White Dragon")) || cards[0];
+  const heroCard =
+    cards.find((card) => card.name.includes("Blue-Eyes White Dragon")) ||
+    cards[0];
 
   // Back to top handler
   const handleBackToTop = () => {
@@ -57,11 +66,14 @@ export default function Index() {
                   Premium Collection
                 </Badge>
                 <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
-                  Master the <span className="text-primary">Blue-Eyes</span> Legacy
+                  Master the <span className="text-primary">Blue-Eyes</span>{" "}
+                  Legacy
                 </h1>
               </div>
               <p className="text-xl text-muted-foreground max-w-md">
-                Discover the most powerful and iconic Blue-Eyes archetype cards. From legendary dragons to support spells, build your ultimate deck.
+                Discover the most powerful and iconic Blue-Eyes archetype cards.
+                From legendary dragons to support spells, build your ultimate
+                deck.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" asChild className="group">
@@ -74,16 +86,22 @@ export default function Index() {
                   <Link to="/archetypes">View All Archetypes</Link>
                 </Button>
               </div>
-              
+
               {/* Stats */}
               <div className="grid grid-cols-3 gap-6 pt-8">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">{cards.length}</div>
-                  <div className="text-sm text-muted-foreground">Blue-Eyes Cards</div>
+                  <div className="text-2xl font-bold text-primary">
+                    {cards.length}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Blue-Eyes Cards
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">1000+</div>
-                  <div className="text-sm text-muted-foreground">Happy Duelists</div>
+                  <div className="text-sm text-muted-foreground">
+                    Happy Duelists
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">24/7</div>
@@ -99,7 +117,11 @@ export default function Index() {
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl transform rotate-3 scale-105"></div>
                   <div className="relative bg-background rounded-2xl p-6 card-shine">
                     <img
-                      src={heroCard.card_images[0]?.image_url_small || heroCard.card_images[0]?.image_url || "/placeholder.svg"}
+                      src={
+                        heroCard.card_images[0]?.image_url_small ||
+                        heroCard.card_images[0]?.image_url ||
+                        "/placeholder.svg"
+                      }
                       alt={heroCard.name}
                       className="w-full max-w-sm mx-auto rounded-lg shadow-2xl"
                     />
@@ -119,9 +141,13 @@ export default function Index() {
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Featured Blue-Eyes Cards</h2>
+            <h2 className="text-3xl font-bold mb-4">
+              Featured Blue-Eyes Cards
+            </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explore the most powerful and sought-after cards from the Blue-Eyes archetype. Each card is carefully selected for its strategic value and collector appeal.
+              Explore the most powerful and sought-after cards from the
+              Blue-Eyes archetype. Each card is carefully selected for its
+              strategic value and collector appeal.
             </p>
           </div>
 
@@ -129,7 +155,9 @@ export default function Index() {
             <div className="flex items-center justify-center py-16">
               <div className="text-center">
                 <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
-                <p className="text-muted-foreground">Loading Blue-Eyes cards...</p>
+                <p className="text-muted-foreground">
+                  Loading Blue-Eyes cards...
+                </p>
               </div>
             </div>
           )}
@@ -180,7 +208,8 @@ export default function Index() {
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">Why Choose DuelMaster?</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              We're committed to providing the best Yu-Gi-Oh! card shopping experience with authenticity, quality, and service you can trust.
+              We're committed to providing the best Yu-Gi-Oh! card shopping
+              experience with authenticity, quality, and service you can trust.
             </p>
           </div>
 
@@ -192,7 +221,8 @@ export default function Index() {
                 </div>
                 <h3 className="font-semibold mb-2">Authentic Cards</h3>
                 <p className="text-sm text-muted-foreground">
-                  All cards are verified authentic and in pristine condition. We guarantee the quality of every purchase.
+                  All cards are verified authentic and in pristine condition. We
+                  guarantee the quality of every purchase.
                 </p>
               </CardContent>
             </Card>
@@ -204,7 +234,8 @@ export default function Index() {
                 </div>
                 <h3 className="font-semibold mb-2">Market Prices</h3>
                 <p className="text-sm text-muted-foreground">
-                  Real-time pricing based on current market values. Get the best deals on your favorite cards.
+                  Real-time pricing based on current market values. Get the best
+                  deals on your favorite cards.
                 </p>
               </CardContent>
             </Card>
@@ -216,7 +247,8 @@ export default function Index() {
                 </div>
                 <h3 className="font-semibold mb-2">Expert Support</h3>
                 <p className="text-sm text-muted-foreground">
-                  Our team of Yu-Gi-Oh! experts is here to help you build the perfect deck and answer any questions.
+                  Our team of Yu-Gi-Oh! experts is here to help you build the
+                  perfect deck and answer any questions.
                 </p>
               </CardContent>
             </Card>

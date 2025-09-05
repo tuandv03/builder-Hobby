@@ -4,9 +4,29 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Loader2, Save, Search } from "lucide-react";
 import { YugiohCard, ApiResponse } from "@shared/types";
 
@@ -43,7 +63,8 @@ export default function Inventory() {
       if (!invRes.ok) throw new Error("Failed to fetch inventory");
 
       const cardsData: ApiResponse = await cardsRes.json();
-      const invData: { inventory: Record<string, number> } = await invRes.json();
+      const invData: { inventory: Record<string, number> } =
+        await invRes.json();
 
       setCards(cardsData.data || []);
       setInventory(invData.inventory || {});
@@ -66,13 +87,24 @@ export default function Inventory() {
     return ["all", ...Array.from(set).sort()];
   }, [cards]);
 
-  type Row = { key: string; id: number; name: string; image: string; type: string; rarity: string };
+  type Row = {
+    key: string;
+    id: number;
+    name: string;
+    image: string;
+    type: string;
+    rarity: string;
+  };
 
   const rows = useMemo<Row[]>(() => {
     const out: Row[] = [];
     for (const c of cards) {
       const rarities = Array.from(
-        new Set((c.card_sets || []).map((s) => s.set_rarity).filter((r): r is string => Boolean(r)))
+        new Set(
+          (c.card_sets || [])
+            .map((s) => s.set_rarity)
+            .filter((r): r is string => Boolean(r)),
+        ),
       );
       const useRars = rarities.length > 0 ? rarities : ["N/A"];
       for (const r of useRars) {
@@ -86,7 +118,10 @@ export default function Inventory() {
         });
       }
     }
-    out.sort((a, b) => a.name.localeCompare(b.name) || a.rarity.localeCompare(b.rarity));
+    out.sort(
+      (a, b) =>
+        a.name.localeCompare(b.name) || a.rarity.localeCompare(b.rarity),
+    );
     return out;
   }, [cards]);
 
@@ -101,9 +136,15 @@ export default function Inventory() {
 
   const total = filteredRows.length;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const start = Math.min((page - 1) * pageSize, Math.max(0, (totalPages - 1) * pageSize));
+  const start = Math.min(
+    (page - 1) * pageSize,
+    Math.max(0, (totalPages - 1) * pageSize),
+  );
   const end = Math.min(total, start + pageSize);
-  const pageRows = useMemo(() => filteredRows.slice(start, start + pageSize), [filteredRows, start, pageSize]);
+  const pageRows = useMemo(
+    () => filteredRows.slice(start, start + pageSize),
+    [filteredRows, start, pageSize],
+  );
 
   useEffect(() => {
     setPage(1);
@@ -125,7 +166,8 @@ export default function Inventory() {
   const handleApplySearch = () => setAppliedSearch(searchTerm);
 
   const getCurrentQtyByKey = (key: string) => inventory[key] ?? 0;
-  const getUpdatedQtyByKey = (key: string) => (updates[key] ?? getCurrentQtyByKey(key));
+  const getUpdatedQtyByKey = (key: string) =>
+    updates[key] ?? getCurrentQtyByKey(key);
 
   const handleQtyChangeByKey = (key: string, value: string) => {
     const n = Math.max(0, Math.floor(Number(value)));
@@ -134,7 +176,9 @@ export default function Inventory() {
   };
 
   const changedCount = useMemo(() => {
-    return Object.keys(updates).filter((k) => updates[k] !== getCurrentQtyByKey(k)).length;
+    return Object.keys(updates).filter(
+      (k) => updates[k] !== getCurrentQtyByKey(k),
+    ).length;
   }, [updates, inventory]);
 
   const handleSave = async () => {
@@ -168,7 +212,9 @@ export default function Inventory() {
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-6">
           <div>
             <h1 className="text-2xl font-bold">Quản lý kho hàng</h1>
-            <p className="text-sm text-muted-foreground">Tìm kiếm theo tên card, cập nhật số lượng và lưu lại.</p>
+            <p className="text-sm text-muted-foreground">
+              Tìm kiếm theo tên card, cập nhật số lượng và lưu lại.
+            </p>
           </div>
 
           <div className="flex gap-2 flex-wrap">
@@ -197,7 +243,10 @@ export default function Inventory() {
                 ))}
               </SelectContent>
             </Select>
-            <Button onClick={handleSave} disabled={saving || changedCount === 0}>
+            <Button
+              onClick={handleSave}
+              disabled={saving || changedCount === 0}
+            >
               {saving ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang lưu...
@@ -222,7 +271,9 @@ export default function Inventory() {
           <Card className="max-w-md mx-auto">
             <CardContent className="pt-6">
               <p className="text-destructive mb-4">{error}</p>
-              <Button variant="outline" onClick={loadData}>Thử lại</Button>
+              <Button variant="outline" onClick={loadData}>
+                Thử lại
+              </Button>
             </CardContent>
           </Card>
         ) : (
@@ -233,8 +284,12 @@ export default function Inventory() {
                   <TableHead className="w-[100px]">Mã</TableHead>
                   <TableHead>Tên card</TableHead>
                   <TableHead className="w-[220px]">Rarity</TableHead>
-                  <TableHead className="w-[140px] text-right">Số lượng hiện tại</TableHead>
-                  <TableHead className="w-[180px] text-right">Số lượng cập nhật</TableHead>
+                  <TableHead className="w-[140px] text-right">
+                    Số lượng hiện tại
+                  </TableHead>
+                  <TableHead className="w-[180px] text-right">
+                    Số lượng cập nhật
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -250,22 +305,32 @@ export default function Inventory() {
                           loading="lazy"
                         />
                         <div>
-                          <div className="font-medium leading-tight">{row.name}</div>
-                          <div className="text-xs text-muted-foreground leading-tight">{row.type}</div>
+                          <div className="font-medium leading-tight">
+                            {row.name}
+                          </div>
+                          <div className="text-xs text-muted-foreground leading-tight">
+                            {row.type}
+                          </div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="text-xs">{row.rarity}</Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {row.rarity}
+                      </Badge>
                     </TableCell>
-                    <TableCell className="text-right">{getCurrentQtyByKey(row.key)}</TableCell>
+                    <TableCell className="text-right">
+                      {getCurrentQtyByKey(row.key)}
+                    </TableCell>
                     <TableCell className="text-right">
                       <Input
                         type="number"
                         min={0}
                         className="w-28 ml-auto"
                         value={getUpdatedQtyByKey(row.key)}
-                        onChange={(e) => handleQtyChangeByKey(row.key, e.target.value)}
+                        onChange={(e) =>
+                          handleQtyChangeByKey(row.key, e.target.value)
+                        }
                       />
                     </TableCell>
                   </TableRow>
@@ -277,7 +342,10 @@ export default function Inventory() {
                 Hiển thị {total === 0 ? 0 : start + 1}–{end} / Tổng {total}
               </div>
               <div className="flex items-center gap-3">
-                <Select value={String(pageSize)} onValueChange={(v) => setPageSize(Number(v))}>
+                <Select
+                  value={String(pageSize)}
+                  onValueChange={(v) => setPageSize(Number(v))}
+                >
                   <SelectTrigger className="w-32">
                     <SelectValue placeholder="Kích thước trang" />
                   </SelectTrigger>
@@ -290,17 +358,36 @@ export default function Inventory() {
                 <Pagination>
                   <PaginationContent>
                     <PaginationItem>
-                      <PaginationPrevious href="#" onClick={(e) => { e.preventDefault(); setPage(Math.max(1, page - 1)); }} />
+                      <PaginationPrevious
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setPage(Math.max(1, page - 1));
+                        }}
+                      />
                     </PaginationItem>
                     {pagesToShow.map((p) => (
                       <PaginationItem key={p}>
-                        <PaginationLink href="#" isActive={p === page} onClick={(e) => { e.preventDefault(); setPage(p); }}>
+                        <PaginationLink
+                          href="#"
+                          isActive={p === page}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setPage(p);
+                          }}
+                        >
                           {p}
                         </PaginationLink>
                       </PaginationItem>
                     ))}
                     <PaginationItem>
-                      <PaginationNext href="#" onClick={(e) => { e.preventDefault(); setPage(Math.min(totalPages, page + 1)); }} />
+                      <PaginationNext
+                        href="#"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setPage(Math.min(totalPages, page + 1));
+                        }}
+                      />
                     </PaginationItem>
                   </PaginationContent>
                 </Pagination>

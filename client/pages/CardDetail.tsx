@@ -7,18 +7,18 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { 
-  ArrowLeft, 
-  Star, 
-  Sword, 
-  Shield, 
-  TrendingUp, 
-  Package, 
+import {
+  ArrowLeft,
+  Star,
+  Sword,
+  Shield,
+  TrendingUp,
+  Package,
   Info,
   ShoppingCart,
   Heart,
   Share2,
-  Loader2 
+  Loader2,
 } from "lucide-react";
 
 export default function CardDetail() {
@@ -36,8 +36,10 @@ export default function CardDetail() {
   const fetchCard = async (cardId: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`/api/card?id=${encodeURIComponent(cardId)}`);
-      
+      const response = await fetch(
+        `/api/card?id=${encodeURIComponent(cardId)}`,
+      );
+
       if (!response.ok) {
         throw new Error("Card not found");
       }
@@ -57,9 +59,12 @@ export default function CardDetail() {
   };
 
   const getCardTypeColor = (type: string) => {
-    if (type.includes("Monster")) return "bg-orange-500/10 text-orange-700 border-orange-200";
-    if (type.includes("Spell")) return "bg-green-500/10 text-green-700 border-green-200";
-    if (type.includes("Trap")) return "bg-purple-500/10 text-purple-700 border-purple-200";
+    if (type.includes("Monster"))
+      return "bg-orange-500/10 text-orange-700 border-orange-200";
+    if (type.includes("Spell"))
+      return "bg-green-500/10 text-green-700 border-green-200";
+    if (type.includes("Trap"))
+      return "bg-purple-500/10 text-purple-700 border-purple-200";
     return "bg-gray-500/10 text-gray-700 border-gray-200";
   };
 
@@ -85,7 +90,9 @@ export default function CardDetail() {
           <div className="text-center py-16">
             <Card className="max-w-md mx-auto">
               <CardContent className="pt-6">
-                <p className="text-destructive mb-4">{error || "Card not found"}</p>
+                <p className="text-destructive mb-4">
+                  {error || "Card not found"}
+                </p>
                 <Button asChild variant="outline">
                   <Link to="/">
                     <ArrowLeft className="w-4 h-4 mr-2" />
@@ -105,9 +112,13 @@ export default function CardDetail() {
       <div className="container mx-auto px-4 py-8">
         {/* Breadcrumb */}
         <div className="flex items-center gap-2 text-sm text-muted-foreground mb-6">
-          <Link to="/" className="hover:text-primary transition-colors">Home</Link>
+          <Link to="/" className="hover:text-primary transition-colors">
+            Home
+          </Link>
           <span>/</span>
-          <Link to="/cards" className="hover:text-primary transition-colors">Cards</Link>
+          <Link to="/cards" className="hover:text-primary transition-colors">
+            Cards
+          </Link>
           <span>/</span>
           <span className="text-foreground">{card.name}</span>
         </div>
@@ -117,12 +128,14 @@ export default function CardDetail() {
           <div className="space-y-4">
             <div className="relative aspect-[2/3] max-w-md mx-auto lg:mx-0">
               <img
-                src={`/images/${card.name}_${card.id}.jpg`|| "/placeholder.svg"}
+                src={
+                  `/images/${card.name}_${card.id}.jpg` || "/placeholder.svg"
+                }
                 alt={card.name}
                 className="w-full h-full object-cover rounded-lg shadow-xl card-shine"
               />
             </div>
-            
+
             {/* Additional Images */}
             {card.card_images.length > 1 && (
               <div className="flex gap-2 justify-center lg:justify-start">
@@ -152,9 +165,9 @@ export default function CardDetail() {
                   <Badge variant="secondary">{card.frameType}</Badge>
                 )}
               </div>
-              
+
               <h1 className="text-3xl font-bold mb-2">{card.name}</h1>
-              
+
               {/* Stats for monsters */}
               {card.atk !== undefined && (
                 <div className="flex items-center gap-6 text-lg mb-4">
@@ -179,15 +192,23 @@ export default function CardDetail() {
 
               {/* Race and Attribute */}
               <div className="flex gap-4 text-muted-foreground mb-6">
-                <span><strong>Race:</strong> {card.race}</span>
-                {card.attribute && <span><strong>Attribute:</strong> {card.attribute}</span>}
+                <span>
+                  <strong>Race:</strong> {card.race}
+                </span>
+                {card.attribute && (
+                  <span>
+                    <strong>Attribute:</strong> {card.attribute}
+                  </span>
+                )}
               </div>
             </div>
 
             {/* Description */}
             <div className="space-y-2">
               <h3 className="font-semibold">Card Effect</h3>
-              <p className="text-muted-foreground leading-relaxed">{card.desc}</p>
+              <p className="text-muted-foreground leading-relaxed">
+                {card.desc}
+              </p>
             </div>
 
             {/* Actions */}
@@ -248,22 +269,31 @@ export default function CardDetail() {
                 {card.card_sets && card.card_sets.length > 0 ? (
                   <div className="space-y-3">
                     {card.card_sets.map((set, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between p-3 border rounded-lg"
+                      >
                         <div>
                           <h4 className="font-medium">{set.set_name}</h4>
-                          <p className="text-sm text-muted-foreground">{set.set_code}</p>
+                          <p className="text-sm text-muted-foreground">
+                            {set.set_code}
+                          </p>
                         </div>
                         <div className="text-right">
                           <Badge variant="outline">{set.set_rarity}</Badge>
                           {set.set_price && (
-                            <p className="text-sm font-medium mt-1">{formatPrice(set.set_price)}</p>
+                            <p className="text-sm font-medium mt-1">
+                              {formatPrice(set.set_price)}
+                            </p>
                           )}
                         </div>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No set information available.</p>
+                  <p className="text-muted-foreground">
+                    No set information available.
+                  </p>
                 )}
               </CardContent>
             </Card>
@@ -280,17 +310,26 @@ export default function CardDetail() {
               <CardContent>
                 {card.card_prices && card.card_prices[0] ? (
                   <div className="grid sm:grid-cols-2 gap-4">
-                    {Object.entries(card.card_prices[0]).map(([market, price]) => (
-                      <div key={market} className="flex justify-between items-center p-3 border rounded-lg">
-                        <span className="font-medium capitalize">
-                          {market.replace('_price', '').replace('_', ' ')}
-                        </span>
-                        <span className="font-bold">{formatPrice(price)}</span>
-                      </div>
-                    ))}
+                    {Object.entries(card.card_prices[0]).map(
+                      ([market, price]) => (
+                        <div
+                          key={market}
+                          className="flex justify-between items-center p-3 border rounded-lg"
+                        >
+                          <span className="font-medium capitalize">
+                            {market.replace("_price", "").replace("_", " ")}
+                          </span>
+                          <span className="font-bold">
+                            {formatPrice(price)}
+                          </span>
+                        </div>
+                      ),
+                    )}
                   </div>
                 ) : (
-                  <p className="text-muted-foreground">No pricing information available.</p>
+                  <p className="text-muted-foreground">
+                    No pricing information available.
+                  </p>
                 )}
               </CardContent>
             </Card>

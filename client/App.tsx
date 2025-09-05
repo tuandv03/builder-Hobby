@@ -32,9 +32,9 @@ const App = () => (
           <Route path="/archetypes" element={<Archetypes />} />
           <Route path="/about" element={<About />} />
           <Route path="/inventory" element={<Inventory />} />
-           <Route path="/order" element={<Order />} />
-           <Route path="/cardInput" element={<CardInput />} />
-           <Route path="/cardPrice" element={<CardPrice />} />
+          <Route path="/order" element={<Order />} />
+          <Route path="/cardInput" element={<CardInput />} />
+          <Route path="/cardPrice" element={<CardPrice />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

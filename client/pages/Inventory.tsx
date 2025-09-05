@@ -4,7 +4,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2, Save, Search } from "lucide-react";
@@ -19,10 +18,10 @@ export default function Inventory() {
   const [appliedSearch, setAppliedSearch] = useState("");
   const [rarity, setRarity] = useState<string>("all");
 
-  // inventory from server: id -> quantity
-  const [inventory, setInventory] = useState<Record<number, number>>({});
-  // pending updates: id -> quantity
-  const [updates, setUpdates] = useState<Record<number, number>>({});
+  // inventory from server: `${id}::${rarity}` -> quantity
+  const [inventory, setInventory] = useState<Record<string, number>>({});
+  // pending updates: `${id}::${rarity}` -> quantity
+  const [updates, setUpdates] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -41,7 +40,7 @@ export default function Inventory() {
       if (!invRes.ok) throw new Error("Failed to fetch inventory");
 
       const cardsData: ApiResponse = await cardsRes.json();
-      const invData: { inventory: Record<number, number> } = await invRes.json();
+      const invData: { inventory: Record<string, number> } = await invRes.json();
 
       setCards(cardsData.data || []);
       setInventory(invData.inventory || {});
@@ -109,14 +108,13 @@ export default function Inventory() {
   };
 
   const changedCount = useMemo(() => {
-    return Object.keys(updates).filter((k) => updates[Number(k)] !== getCurrentQty(Number(k))).length;
+    return Object.keys(updates).filter((k) => updates[k] !== getCurrentQtyByKey(k)).length;
   }, [updates, inventory]);
 
   const handleSave = async () => {
-    const payload: Record<number, number> = {};
+    const payload: Record<string, number> = {};
     for (const [k, v] of Object.entries(updates)) {
-      const id = Number(k);
-      if (v !== getCurrentQty(id)) payload[id] = v;
+      if (v !== getCurrentQtyByKey(k)) payload[k] = v;
     }
     if (Object.keys(payload).length === 0) return;
 
@@ -128,7 +126,7 @@ export default function Inventory() {
         body: JSON.stringify({ updates: payload }),
       });
       if (!res.ok) throw new Error("Failed to save inventory");
-      const data: { inventory: Record<number, number> } = await res.json();
+      const data: { inventory: Record<string, number> } = await res.json();
       setInventory(data.inventory || {});
       setUpdates({});
     } catch (e) {

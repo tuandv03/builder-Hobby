@@ -6,10 +6,11 @@
  *    Body: { cusName, phoneNumber, address }
  */
 
-import express, { json } from "express";
-import ExcelJS from "exceljs";
-import { join } from "path";
-import cors from "cors";
+const express = require("express");
+const { json } = require("express");
+const ExcelJS = require("exceljs");
+const join = require("path");;
+const cors = require("cors");
 
 const app = express();
 const PORT = 3001;
@@ -29,6 +30,7 @@ app.post("/api/order", async (req, res) => {
   }
 
   try {
+    console.log("🔄 start ghi đơn hàng vào file Excel...");
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.readFile(excelFile);
     const worksheet = workbook.worksheets[0];

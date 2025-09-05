@@ -41,7 +41,7 @@ export default function CardItem({ card, className }: CardItemProps) {
       <CardContent className="p-0">
         <div className="relative aspect-[2/3] overflow-hidden">
           <img
-            src={card.card_images[0]?.image_url || "/placeholder.svg"}
+            src={`/images_small/${card.name}_${card.id}.jpg`}
             alt={card.name}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
             loading="lazy"

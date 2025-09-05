@@ -117,7 +117,7 @@ export default function CardDetail() {
           <div className="space-y-4">
             <div className="relative aspect-[2/3] max-w-md mx-auto lg:mx-0">
               <img
-                src={card.card_images[0]?.image_url || "/placeholder.svg"}
+                src={`/images/${card.name}_${card.id}.jpg`|| "/placeholder.svg"}
                 alt={card.name}
                 className="w-full h-full object-cover rounded-lg shadow-xl card-shine"
               />

@@ -30,6 +30,7 @@ export default function About() {
   const [pushed, setPushed] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [templateFile, setTemplateFile] = useState<ArrayBuffer | null>(null);
+  const [message, setMessage] = useState(null);
 
   // Đọc file template khi người dùng chọn
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -97,7 +98,7 @@ export default function About() {
 
   // Hàm lưu đơn hàng vào file Excel
 async function saveOrderToExcel(order: OrderData) {
-  await fetch("http://localhost:3001/api/order", {
+  const res = await fetch("http://localhost:3001/api/order", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ 
@@ -106,8 +107,16 @@ async function saveOrderToExcel(order: OrderData) {
       address: order.address 
     })
   });
-}
+  
+    const result = await res.json();
 
+    if (res.ok) {
+      setMessage({ type: "success", text: "Đơn hàng đã gửi thành công!" });
+      setOrder(result);
+    } else {
+      setMessage({ type: "error", text: result.message || "Có lỗi xảy ra" });
+    }
+  }
   return (
     <Layout>
       <div className="max-w-xl mx-auto mt-10">       
@@ -177,6 +186,18 @@ async function saveOrderToExcel(order: OrderData) {
                 Đã gửi thành công!
               </div>
             )}
+            {message && (
+              <div
+                className={`mt-4 p-4 rounded-xl text-center font-semibold ${
+                  message.type === "success"
+                    ? "bg-green-100 text-green-700 border border-green-300"
+                    : "bg-red-100 text-red-700 border border-red-300"
+                }`}
+              >
+                {message.text}
+              </div>
+            )}
+
           </div>
         )}
       </div>

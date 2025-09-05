@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import Layout from "@/components/Layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -150,7 +151,7 @@ export default function Inventory() {
             <Button onClick={handleSave} disabled={saving || changedCount === 0}>
               {saving ? (
                 <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> ��ang lưu...
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" /> Đang lưu...
                 </>
               ) : (
                 <>
@@ -182,6 +183,7 @@ export default function Inventory() {
                 <TableRow>
                   <TableHead className="w-[100px]">Mã</TableHead>
                   <TableHead>Tên card</TableHead>
+                  <TableHead className="w-[220px]">Rarity</TableHead>
                   <TableHead className="w-[140px] text-right">Số lượng hiện tại</TableHead>
                   <TableHead className="w-[180px] text-right">Số lượng cập nhật</TableHead>
                 </TableRow>
@@ -202,6 +204,29 @@ export default function Inventory() {
                           <div className="font-medium leading-tight">{c.name}</div>
                           <div className="text-xs text-muted-foreground leading-tight">{c.type}</div>
                         </div>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {(() => {
+                          const rset = Array.from(
+                            new Set((c.card_sets || []).map((s) => s.set_rarity).filter((r): r is string => Boolean(r)))
+                          );
+                          const shown = rset.slice(0, 3);
+                          const extra = rset.length - shown.length;
+                          return (
+                            <>
+                              {shown.map((r, idx) => (
+                                <Badge key={idx} variant="outline" className="text-xs">
+                                  {r}
+                                </Badge>
+                              ))}
+                              {extra > 0 && (
+                                <Badge variant="outline" className="text-xs">+{extra}</Badge>
+                              )}
+                            </>
+                          );
+                        })()}
                       </div>
                     </TableCell>
                     <TableCell className="text-right">{getCurrentQty(c.id)}</TableCell>

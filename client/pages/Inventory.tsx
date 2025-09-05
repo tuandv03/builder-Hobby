@@ -3,6 +3,7 @@ import Layout from "@/components/Layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2, Save, Search } from "lucide-react";
 import { YugiohCard, ApiResponse } from "@shared/types";
@@ -14,6 +15,7 @@ export default function Inventory() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
+  const [rarity, setRarity] = useState<string>("all");
 
   // inventory from server: id -> quantity
   const [inventory, setInventory] = useState<Record<number, number>>({});
@@ -50,11 +52,24 @@ export default function Inventory() {
     }
   };
 
+  const rarityOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const c of cards) {
+      for (const s of c.card_sets || []) {
+        if (s.set_rarity) set.add(s.set_rarity);
+      }
+    }
+    return ["all", ...Array.from(set).sort()];
+  }, [cards]);
+
   const filteredCards = useMemo(() => {
     const term = appliedSearch.trim().toLowerCase();
-    if (!term) return cards;
-    return cards.filter((c) => c.name.toLowerCase().includes(term));
-  }, [cards, appliedSearch]);
+    return cards.filter((c) => {
+      const nameOk = term ? c.name.toLowerCase().includes(term) : true;
+      const rarityOk = rarity === "all" ? true : (c.card_sets || []).some((s) => s.set_rarity === rarity);
+      return nameOk && rarityOk;
+    });
+  }, [cards, appliedSearch, rarity]);
 
   const handleApplySearch = () => setAppliedSearch(searchTerm);
 
@@ -106,7 +121,7 @@ export default function Inventory() {
             <p className="text-sm text-muted-foreground">Tìm kiếm theo tên card, cập nhật số lượng và lưu lại.</p>
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             <div className="relative w-64">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
               <Input
@@ -120,6 +135,18 @@ export default function Inventory() {
             <Button onClick={handleApplySearch} variant="outline">
               Tìm kiếm
             </Button>
+            <Select value={rarity} onValueChange={setRarity}>
+              <SelectTrigger className="w-56">
+                <SelectValue placeholder="Rarity" />
+              </SelectTrigger>
+              <SelectContent>
+                {rarityOptions.map((r) => (
+                  <SelectItem key={r} value={r}>
+                    {r === "all" ? "Tất cả rarity" : r}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button onClick={handleSave} disabled={saving || changedCount === 0}>
               {saving ? (
                 <>

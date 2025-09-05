@@ -35,7 +35,7 @@ export default function Index() {
     }
   };
 
-  const featuredCards = cards.slice(0, 8);
+  const featuredCards = cards.slice(0, 12);
   const heroCard = cards.find(card => card.name.includes("Blue-Eyes White Dragon")) || cards[0];
 
   // Back to top handler
@@ -148,7 +148,7 @@ export default function Index() {
           )}
 
           {!loading && !error && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-8">
               {featuredCards.map((card, index) => (
                 <div
                   key={card.id}

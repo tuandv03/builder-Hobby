@@ -36,7 +36,7 @@ export default function CardDetail() {
   const fetchCard = async (cardId: string) => {
     try {
       setLoading(true);
-      const response = await fetch(`https://db.ygoprodeck.com/api/v7/cardinfo.php?id=${cardId}`);
+      const response = await fetch(`/api/card?id=${encodeURIComponent(cardId)}`);
       
       if (!response.ok) {
         throw new Error("Card not found");

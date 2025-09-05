@@ -20,7 +20,7 @@ export default function Index() {
   const fetchBlueEyesCards = async () => {
     try {
       setLoading(true);
-      const response = await fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php?archetype=Blue-Eyes");
+      const response = await fetch("/api/cards?archetype=Blue-Eyes");
       
       if (!response.ok) {
         throw new Error("Failed to fetch cards");
@@ -99,7 +99,7 @@ export default function Index() {
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl transform rotate-3 scale-105"></div>
                   <div className="relative bg-background rounded-2xl p-6 card-shine">
                     <img
-                      src={heroCard.card_images[0]?.image_url || "/placeholder.svg"}
+                      src={heroCard.card_images[0]?.image_url_small || heroCard.card_images[0]?.image_url || "/placeholder.svg"}
                       alt={heroCard.name}
                       className="w-full max-w-sm mx-auto rounded-lg shadow-2xl"
                     />

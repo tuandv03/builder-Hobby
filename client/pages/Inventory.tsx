@@ -35,7 +35,7 @@ export default function Inventory() {
     try {
       setLoading(true);
       const [cardsRes, invRes] = await Promise.all([
-        fetch("https://db.ygoprodeck.com/api/v7/cardinfo.php?archetype=Blue-Eyes"),
+        fetch("/api/cards?archetype=Blue-Eyes"),
         fetch("/api/inventory"),
       ]);
 

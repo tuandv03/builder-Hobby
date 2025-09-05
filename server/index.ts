@@ -19,5 +19,9 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
+  // Inventory API (in-memory)
+  app.get("/api/inventory", (await import("./routes/inventory")).getInventory);
+  app.post("/api/inventory", (await import("./routes/inventory")).updateInventory);
+
   return app;
 }

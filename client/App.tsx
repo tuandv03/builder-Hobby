@@ -11,6 +11,7 @@ import CardDetail from "./pages/CardDetail";
 import Cards from "./pages/Cards";
 import Archetypes from "./pages/Archetypes";
 import About from "./pages/About";
+import Inventory from "./pages/Inventory";
 import NotFound from "./pages/NotFound";
 import Order from "./pages/Order";
 import CardInput from "./pages/CardMarket/CardInput";

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Loader2, Save, Search } from "lucide-react";
@@ -63,24 +64,48 @@ export default function Inventory() {
     return ["all", ...Array.from(set).sort()];
   }, [cards]);
 
-  const filteredCards = useMemo(() => {
+  type Row = { key: string; id: number; name: string; image: string; type: string; rarity: string };
+
+  const rows = useMemo<Row[]>(() => {
+    const out: Row[] = [];
+    for (const c of cards) {
+      const rarities = Array.from(
+        new Set((c.card_sets || []).map((s) => s.set_rarity).filter((r): r is string => Boolean(r)))
+      );
+      const useRars = rarities.length > 0 ? rarities : ["N/A"];
+      for (const r of useRars) {
+        out.push({
+          key: `${c.id}::${r}`,
+          id: c.id,
+          name: c.name,
+          image: c.card_images[0]?.image_url_small || "/placeholder.svg",
+          type: c.type,
+          rarity: r,
+        });
+      }
+    }
+    out.sort((a, b) => a.name.localeCompare(b.name) || a.rarity.localeCompare(b.rarity));
+    return out;
+  }, [cards]);
+
+  const filteredRows = useMemo(() => {
     const term = appliedSearch.trim().toLowerCase();
-    return cards.filter((c) => {
-      const nameOk = term ? c.name.toLowerCase().includes(term) : true;
-      const rarityOk = rarity === "all" ? true : (c.card_sets || []).some((s) => s.set_rarity === rarity);
+    return rows.filter((row) => {
+      const nameOk = term ? row.name.toLowerCase().includes(term) : true;
+      const rarityOk = rarity === "all" ? true : row.rarity === rarity;
       return nameOk && rarityOk;
     });
-  }, [cards, appliedSearch, rarity]);
+  }, [rows, appliedSearch, rarity]);
 
   const handleApplySearch = () => setAppliedSearch(searchTerm);
 
-  const getCurrentQty = (id: number) => inventory[id] ?? 0;
-  const getUpdatedQty = (id: number) => (updates[id] ?? getCurrentQty(id));
+  const getCurrentQtyByKey = (key: string) => inventory[key] ?? 0;
+  const getUpdatedQtyByKey = (key: string) => (updates[key] ?? getCurrentQtyByKey(key));
 
-  const handleQtyChange = (id: number, value: string) => {
-    const n = Math.max(0, Math.floor(Number(value))); // ensure >=0 int
+  const handleQtyChangeByKey = (key: string, value: string) => {
+    const n = Math.max(0, Math.floor(Number(value)));
     if (!Number.isFinite(n)) return;
-    setUpdates((prev) => ({ ...prev, [id]: n }));
+    setUpdates((prev) => ({ ...prev, [key]: n }));
   };
 
   const changedCount = useMemo(() => {
@@ -189,54 +214,34 @@ export default function Inventory() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {filteredCards.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell className="font-medium">{c.id}</TableCell>
+                {filteredRows.map((row) => (
+                  <TableRow key={row.key}>
+                    <TableCell className="font-medium">{row.id}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <img
-                          src={c.card_images[0]?.image_url_small || "/placeholder.svg"}
-                          alt={c.name}
+                          src={row.image}
+                          alt={row.name}
                           className="w-10 h-14 object-cover rounded border"
                           loading="lazy"
                         />
                         <div>
-                          <div className="font-medium leading-tight">{c.name}</div>
-                          <div className="text-xs text-muted-foreground leading-tight">{c.type}</div>
+                          <div className="font-medium leading-tight">{row.name}</div>
+                          <div className="text-xs text-muted-foreground leading-tight">{row.type}</div>
                         </div>
                       </div>
                     </TableCell>
                     <TableCell>
-                      <div className="flex flex-wrap gap-1">
-                        {(() => {
-                          const rset = Array.from(
-                            new Set((c.card_sets || []).map((s) => s.set_rarity).filter((r): r is string => Boolean(r)))
-                          );
-                          const shown = rset.slice(0, 3);
-                          const extra = rset.length - shown.length;
-                          return (
-                            <>
-                              {shown.map((r, idx) => (
-                                <Badge key={idx} variant="outline" className="text-xs">
-                                  {r}
-                                </Badge>
-                              ))}
-                              {extra > 0 && (
-                                <Badge variant="outline" className="text-xs">+{extra}</Badge>
-                              )}
-                            </>
-                          );
-                        })()}
-                      </div>
+                      <Badge variant="outline" className="text-xs">{row.rarity}</Badge>
                     </TableCell>
-                    <TableCell className="text-right">{getCurrentQty(c.id)}</TableCell>
+                    <TableCell className="text-right">{getCurrentQtyByKey(row.key)}</TableCell>
                     <TableCell className="text-right">
                       <Input
                         type="number"
                         min={0}
                         className="w-28 ml-auto"
-                        value={getUpdatedQty(c.id)}
-                        onChange={(e) => handleQtyChange(c.id, e.target.value)}
+                        value={getUpdatedQtyByKey(row.key)}
+                        onChange={(e) => handleQtyChangeByKey(row.key, e.target.value)}
                       />
                     </TableCell>
                   </TableRow>

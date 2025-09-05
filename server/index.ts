@@ -2,6 +2,7 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import { getInventory, updateInventory } from "./routes/inventory";
 
 export function createServer() {
   const app = express();
@@ -20,8 +21,8 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
 
   // Inventory API (in-memory)
-  app.get("/api/inventory", (await import("./routes/inventory")).getInventory);
-  app.post("/api/inventory", (await import("./routes/inventory")).updateInventory);
+  app.get("/api/inventory", getInventory);
+  app.post("/api/inventory", updateInventory);
 
   return app;
 }

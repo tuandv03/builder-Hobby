@@ -14,7 +14,7 @@ const cors = require("cors");
 
 const app = express();
 const PORT = 3001;
-const excelFile = "./server/VTP_excel_don_hang.xlsx";
+const excelFile = "./VTP_excel_don_hang.xlsx";
 
 app.use(cors());
 app.use(json());

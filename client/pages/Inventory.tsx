@@ -30,6 +30,15 @@ import {
 import { Loader2, Save, Search } from "lucide-react";
 import { YugiohCard, ApiResponse } from "@shared/types";
 
+// Model inventory
+export interface InventoryItem {
+  card_code: string;
+  card_name: string;
+  set_rarity: string;
+  quantity: number;
+  card_url?: string;
+}
+
 export default function Inventory() {
   const [cards, setCards] = useState<YugiohCard[]>([]);
   const [loading, setLoading] = useState(true);
@@ -41,9 +50,9 @@ export default function Inventory() {
   const [page, setPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(20);
 
-  // inventory from server: `${id}::${rarity}` -> quantity
-  const [inventory, setInventory] = useState<Record<string, number>>({});
-  // pending updates: `${id}::${rarity}` -> quantity
+  // inventory from server: array of InventoryItem
+  const [inventory, setInventory] = useState<InventoryItem[]>([]);
+  // pending updates: card_code + set_rarity -> quantity
   const [updates, setUpdates] = useState<Record<string, number>>({});
   const [saving, setSaving] = useState(false);
 
@@ -54,20 +63,11 @@ export default function Inventory() {
   const loadData = async () => {
     try {
       setLoading(true);
-      const [cardsRes, invRes] = await Promise.all([
-        fetch("/api/cards?archetype=Blue-Eyes"),
-        fetch("/api/inventory"),
-      ]);
-
-      if (!cardsRes.ok) throw new Error("Failed to fetch cards");
+      const invRes = await fetch("/api/inventory", { cache: "no-store" });
       if (!invRes.ok) throw new Error("Failed to fetch inventory");
-
-      const cardsData: ApiResponse = await cardsRes.json();
-      const invData: { inventory: Record<string, number> } =
-        await invRes.json();
-
-      setCards(cardsData.data || []);
-      setInventory(invData.inventory || {});
+      const invData = await invRes.json();
+      // Giả sử trả về: { inventory: InventoryItem[] }
+      setInventory(invData.data || []);
       setUpdates({});
       setError(null);
     } catch (e) {
@@ -87,49 +87,23 @@ export default function Inventory() {
     return ["all", ...Array.from(set).sort()];
   }, [cards]);
 
-  type Row = {
-    key: string;
-    id: number;
-    name: string;
-    image: string;
-    type: string;
-    rarity: string;
-  };
-
-  const rows = useMemo<Row[]>(() => {
-    const out: Row[] = [];
-    for (const c of cards) {
-      const rarities = Array.from(
-        new Set(
-          (c.card_sets || [])
-            .map((s) => s.set_rarity)
-            .filter((r): r is string => Boolean(r)),
-        ),
-      );
-      const useRars = rarities.length > 0 ? rarities : ["N/A"];
-      for (const r of useRars) {
-        out.push({
-          key: `${c.id}::${r}`,
-          id: c.id,
-          name: c.name,
-          image: c.card_images[0]?.image_url_small || "/placeholder.svg",
-          type: c.type,
-          rarity: r,
-        });
-      }
-    }
-    out.sort(
-      (a, b) =>
-        a.name.localeCompare(b.name) || a.rarity.localeCompare(b.rarity),
-    );
-    return out;
-  }, [cards]);
+  // Mapping rows từ inventory
+  const rows = useMemo(() => {
+    return inventory.map((item) => ({
+      key: `${item.card_code}::${item.set_rarity}`,
+      card_code: item.card_code,
+      card_name: item.card_name,
+      set_rarity: item.set_rarity,
+      quantity: item.quantity,
+      card_url: item.card_url
+    }));
+  }, [inventory]);
 
   const filteredRows = useMemo(() => {
     const term = appliedSearch.trim().toLowerCase();
     return rows.filter((row) => {
-      const nameOk = term ? row.name.toLowerCase().includes(term) : true;
-      const rarityOk = rarity === "all" ? true : row.rarity === rarity;
+      const nameOk = term ? row.card_name.toLowerCase().includes(term) : true;
+      const rarityOk = rarity === "all" ? true : row.set_rarity === rarity;
       return nameOk && rarityOk;
     });
   }, [rows, appliedSearch, rarity]);
@@ -165,7 +139,10 @@ export default function Inventory() {
 
   const handleApplySearch = () => setAppliedSearch(searchTerm);
 
-  const getCurrentQtyByKey = (key: string) => inventory[key] ?? 0;
+  const getCurrentQtyByKey = (key: string) => {
+    const item = inventory.find((i) => `${i.card_code}::${i.set_rarity}` === key);
+    return item ? item.quantity : 0;
+  };
   const getUpdatedQtyByKey = (key: string) =>
     updates[key] ?? getCurrentQtyByKey(key);
 
@@ -196,8 +173,8 @@ export default function Inventory() {
         body: JSON.stringify({ updates: payload }),
       });
       if (!res.ok) throw new Error("Failed to save inventory");
-      const data: { inventory: Record<string, number> } = await res.json();
-      setInventory(data.inventory || {});
+      const data = await res.json();
+      setInventory(data.inventory || []);
       setUpdates({});
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to save inventory");
@@ -281,13 +258,14 @@ export default function Inventory() {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead className="w-[100px]">Mã</TableHead>
-                  <TableHead>Tên card</TableHead>
-                  <TableHead className="w-[220px]">Rarity</TableHead>
-                  <TableHead className="w-[140px] text-right">
-                    Số lượng hiện tại
+                  <TableHead className="w-[120px] text-center">Hình ảnh</TableHead>
+                  <TableHead className="w-[150px] text-center">Mã Card</TableHead>
+                  <TableHead>Tên Card</TableHead>
+                  <TableHead className="w-[220px] text-center">Rarity</TableHead>
+                  <TableHead className="w-[140px] text-center">
+                    Số lượng
                   </TableHead>
-                  <TableHead className="w-[180px] text-right">
+                  <TableHead className="w-[180px] text-center">
                     Số lượng cập nhật
                   </TableHead>
                 </TableRow>
@@ -295,32 +273,23 @@ export default function Inventory() {
               <TableBody>
                 {pageRows.map((row) => (
                   <TableRow key={row.key}>
-                    <TableCell className="font-medium">{row.id}</TableCell>
                     <TableCell>
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={row.image}
-                          alt={row.name}
-                          className="w-10 h-14 object-cover rounded border"
-                          loading="lazy"
-                        />
-                        <div>
-                          <div className="font-medium leading-tight">
-                            {row.name}
-                          </div>
-                          <div className="text-xs text-muted-foreground leading-tight">
-                            {row.type}
-                          </div>
-                        </div>
-                      </div>
+                      <img
+                        src={`/images_small/${row.card_url}.jpg`}
+                        alt={row.card_name}
+                        className="w-16 h-16 object-cover rounded text-center mx-auto"
+                        onError={e => (e.currentTarget.src = "/placeholder.svg")}
+                      />
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="font-medium text-center">{row.card_code}</TableCell>
+                    <TableCell>{row.card_name}</TableCell>
+                    <TableCell className="text-center">
                       <Badge variant="outline" className="text-xs">
-                        {row.rarity}
+                        {row.set_rarity}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      {getCurrentQtyByKey(row.key)}
+                      {row.quantity}
                     </TableCell>
                     <TableCell className="text-right">
                       <Input

@@ -13,6 +13,7 @@ import Archetypes from "./pages/Archetypes";
 import About from "./pages/About";
 import Inventory from "./pages/Inventory";
 import NotFound from "./pages/NotFound";
+import Admin from "./pages/Admin";
 import Order from "./pages/Order";
 import CardInput from "./pages/CardMarket/CardInput";
 import CardPrice from "./pages/CardMarket/CardPrice";

@@ -19,8 +19,16 @@ const withTimeout = async <T>(p: Promise<T>, ms = 10000): Promise<T> => {
 
 export const getCards: RequestHandler = async (req, res) => {
   try {
-    const archetype = (req.query.archetype as string) ?? "Blue-Eyes";
-    const url = `${YGO_BASE}/cardinfo.php?archetype=${encodeURIComponent(archetype)}`;
+    const params = new URLSearchParams();
+    // Forward ALL query params (name, archetype, level, attribute, etc.)
+    for (const [k, v] of Object.entries(req.query)) {
+      if (Array.isArray(v)) {
+        for (const vi of v) params.append(k, String(vi));
+      } else if (v != null) {
+        params.append(k, String(v));
+      }
+    }
+    const url = `${YGO_BASE}/cardinfo.php${params.size ? `?${params.toString()}` : ""}`;
     const response = await withTimeout(
       fetch(url, { headers: { accept: "application/json" } }),
     );

@@ -3,8 +3,21 @@ import Layout from "@/components/Layout";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -18,19 +31,81 @@ type QueryOption = {
 
 const OPTIONS: QueryOption[] = [
   { key: "all", label: "Get all cards", params: {} },
-  { key: "darkMagician", label: "Get \"Dark Magician\" card information", params: { name: "Dark Magician" } },
-  { key: "blueEyes", label: "Get all cards belonging to \"Blue-Eyes\" archetype", params: { archetype: "Blue-Eyes" } },
-  { key: "l4WaterAtk", label: "Get all Level 4/RANK 4 Water cards and order by atk", params: { level: "4", attribute: "water", sort: "atk" } },
-  { key: "banlistL4", label: "Get all cards on the TCG Banlist who are level 4 and order by name (A-Z)", params: { banlist: "tcg", level: "4", sort: "name" } },
-  { key: "mrDark", label: "Get all Dark attribute monsters from the Metal Raiders set", params: { cardset: "metal raiders", attribute: "dark" } },
-  { key: "wizardLightSpellcaster", label: "Get all cards with \"Wizard\" in name, LIGHT attribute, race Spellcaster", params: { fname: "Wizard", attribute: "light", race: "spellcaster" } },
-  { key: "equipSpell", label: "Get all Spell Cards that are Equip Spell Cards", params: { type: "spell card", race: "equip" } },
-  { key: "speedDuel", label: "Get all Speed Duel Format Cards", params: { format: "Speed Duel" } },
-  { key: "rushDuel", label: "Get all Rush Duel Format Cards", params: { format: "Rush Duel" } },
-  { key: "waterLinkMarkers", label: "Get all Water Link Monsters with Link Markers of Top and Bottom", params: { attribute: "water", type: "Link Monster", linkmarker: "top,bottom" } },
-  { key: "miscTornadoDragon", label: "Get Card Information with misc parameter (Tornado Dragon)", params: { name: "Tornado Dragon", misc: "yes" } },
-  { key: "staples", label: "Get all cards considered Staples", params: { staple: "yes" } },
-  { key: "tcgDateRange", label: "Get all TCG cards released between 2000-01-01 and 2002-08-23", params: { startdate: "2000-01-01", enddate: "2002-08-23", dateregion: "tcg" } },
+  {
+    key: "darkMagician",
+    label: 'Get "Dark Magician" card information',
+    params: { name: "Dark Magician" },
+  },
+  {
+    key: "blueEyes",
+    label: 'Get all cards belonging to "Blue-Eyes" archetype',
+    params: { archetype: "Blue-Eyes" },
+  },
+  {
+    key: "l4WaterAtk",
+    label: "Get all Level 4/RANK 4 Water cards and order by atk",
+    params: { level: "4", attribute: "water", sort: "atk" },
+  },
+  {
+    key: "banlistL4",
+    label:
+      "Get all cards on the TCG Banlist who are level 4 and order by name (A-Z)",
+    params: { banlist: "tcg", level: "4", sort: "name" },
+  },
+  {
+    key: "mrDark",
+    label: "Get all Dark attribute monsters from the Metal Raiders set",
+    params: { cardset: "metal raiders", attribute: "dark" },
+  },
+  {
+    key: "wizardLightSpellcaster",
+    label:
+      'Get all cards with "Wizard" in name, LIGHT attribute, race Spellcaster',
+    params: { fname: "Wizard", attribute: "light", race: "spellcaster" },
+  },
+  {
+    key: "equipSpell",
+    label: "Get all Spell Cards that are Equip Spell Cards",
+    params: { type: "spell card", race: "equip" },
+  },
+  {
+    key: "speedDuel",
+    label: "Get all Speed Duel Format Cards",
+    params: { format: "Speed Duel" },
+  },
+  {
+    key: "rushDuel",
+    label: "Get all Rush Duel Format Cards",
+    params: { format: "Rush Duel" },
+  },
+  {
+    key: "waterLinkMarkers",
+    label: "Get all Water Link Monsters with Link Markers of Top and Bottom",
+    params: {
+      attribute: "water",
+      type: "Link Monster",
+      linkmarker: "top,bottom",
+    },
+  },
+  {
+    key: "miscTornadoDragon",
+    label: "Get Card Information with misc parameter (Tornado Dragon)",
+    params: { name: "Tornado Dragon", misc: "yes" },
+  },
+  {
+    key: "staples",
+    label: "Get all cards considered Staples",
+    params: { staple: "yes" },
+  },
+  {
+    key: "tcgDateRange",
+    label: "Get all TCG cards released between 2000-01-01 and 2002-08-23",
+    params: {
+      startdate: "2000-01-01",
+      enddate: "2002-08-23",
+      dateregion: "tcg",
+    },
+  },
 ];
 
 function buildQueryString(base: Record<string, string>, extra: string): string {
@@ -56,7 +131,10 @@ export default function Admin() {
   const [error, setError] = useState<string | null>(null);
   const [cards, setCards] = useState<YugiohCard[] | null>(null);
 
-  const selectedOption = useMemo(() => OPTIONS.find((o) => o.key === selected)!, [selected]);
+  const selectedOption = useMemo(
+    () => OPTIONS.find((o) => o.key === selected)!,
+    [selected],
+  );
 
   const endpointPreview = useMemo(() => {
     const qs = buildQueryString(selectedOption.params, extraParams);
@@ -74,7 +152,10 @@ export default function Admin() {
       if (!res.ok) throw new Error(`Request failed (${res.status})`);
       const data: ApiResponse = await res.json();
       setCards(data.data || []);
-      toast({ title: "Thành công", description: `Đã tải ${data.data?.length ?? 0} cards` });
+      toast({
+        title: "Thành công",
+        description: `Đã tải ${data.data?.length ?? 0} cards`,
+      });
     } catch (e) {
       const msg = e instanceof Error ? e.message : "Failed to fetch";
       setError(msg);
@@ -91,14 +172,19 @@ export default function Admin() {
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
           <h1 className="text-2xl font-bold">Admin: Pull data từ API</h1>
-          <p className="text-sm text-muted-foreground">Chọn mẫu truy vấn, nhập tham số bổ sung (key=value&key2=value2), và nhấn Lấy dữ liệu.</p>
+          <p className="text-sm text-muted-foreground">
+            Chọn mẫu truy vấn, nhập tham số bổ sung (key=value&key2=value2), và
+            nhấn Lấy dữ liệu.
+          </p>
         </div>
 
         <Card>
           <CardContent className="pt-6 space-y-4">
             <div className="flex flex-col gap-3 md:flex-row md:items-center">
               <div className="w-full md:w-1/2">
-                <label className="text-sm font-medium mb-2 block">Chọn truy vấn</label>
+                <label className="text-sm font-medium mb-2 block">
+                  Chọn truy vấn
+                </label>
                 <Select value={selected} onValueChange={setSelected}>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Chọn truy vấn" />
@@ -113,7 +199,9 @@ export default function Admin() {
                 </Select>
               </div>
               <div className="w-full md:flex-1">
-                <label className="text-sm font-medium mb-2 block">Tham số bổ sung (tùy chọn)</label>
+                <label className="text-sm font-medium mb-2 block">
+                  Tham số bổ sung (tùy chọn)
+                </label>
                 <Input
                   placeholder="ví dụ: level=7&attribute=dark"
                   value={extraParams}
@@ -132,16 +220,25 @@ export default function Admin() {
                     </>
                   )}
                 </Button>
-                <Button variant="outline" onClick={() => { setExtraParams(""); setCards(null); setError(null); }}>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setExtraParams("");
+                    setCards(null);
+                    setError(null);
+                  }}
+                >
                   Reset
                 </Button>
               </div>
             </div>
 
             <div className="text-xs text-muted-foreground">
-              Endpoint nội bộ: <code className="text-foreground">{endpointPreview.api}</code>
+              Endpoint nội bộ:{" "}
+              <code className="text-foreground">{endpointPreview.api}</code>
               <br />
-              Endpoint gốc: <code className="text-foreground">{endpointPreview.remote}</code>
+              Endpoint gốc:{" "}
+              <code className="text-foreground">{endpointPreview.remote}</code>
             </div>
           </CardContent>
         </Card>
@@ -158,7 +255,9 @@ export default function Admin() {
                 <p className="text-destructive">{error}</p>
               ) : cards ? (
                 <>
-                  <p className="text-sm text-muted-foreground mb-3">Tổng: {cards.length}. Hiển thị 20 mục đầu.</p>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Tổng: {cards.length}. Hiển thị 20 mục đầu.
+                  </p>
                   <div className="rounded-lg border">
                     <Table>
                       <TableHeader>
@@ -191,7 +290,7 @@ export default function Admin() {
               <h2 className="font-semibold mb-2">Xem JSON (mẫu)</h2>
               <ScrollArea className="h-80 rounded border p-3 bg-muted/20">
                 <pre className="text-xs whitespace-pre-wrap break-all">
-{JSON.stringify(sample, null, 2)}
+                  {JSON.stringify(sample, null, 2)}
                 </pre>
               </ScrollArea>
             </CardContent>

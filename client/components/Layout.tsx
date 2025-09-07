@@ -32,6 +32,11 @@ export default function Layout({ children }: LayoutProps) {
       label: "Inventory",
       active: location.pathname === "/inventory",
     },
+    {
+      href: "/admin",
+      label: "Admin",
+      active: location.pathname === "/admin",
+    },
     { href: "/about", label: "About", active: location.pathname === "/about" },
   ];
 

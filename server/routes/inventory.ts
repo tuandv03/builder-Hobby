@@ -1,33 +1,61 @@
 import { RequestHandler } from "express";
+import { queryDb, executeDb } from "../services/serviceBase";
 
-// Simple in-memory store (non-persistent). For persistence, connect a DB MCP like Neon/Supabase.
-// Key format: `${cardId}::${rarity}` where rarity is a string like "Ultra Rare" or "N/A" when missing
-const inventoryStore: Record<string, number> = {};
-
-export const getInventory: RequestHandler = (_req, res) => {
-  res.json({ inventory: inventoryStore });
+// Lấy inventory từ DB
+export const getInventory: RequestHandler = async (_req, res) => {
+  try {
+   // console.log("Fetching inventory from DB");
+    const data = await queryDb(`SELECT  c.card_code , c.card_name,c.set_rarity_code 
+             ,c.set_rarity   ,cs.quantity ,c.card_name||'_'||c.card_id AS card_url
+            FROM  cardinventory cs
+            LEFT JOIN cardsets c ON cs.cardset_id = c.id  
+            where c.set_code = 'RA04' AND c.set_rarity LIKE 'Qua%'
+            ORDER BY  c.set_rarity_code,c.card_name `);
+    // Trả về dạng object: { "cardId::rarity": quantity }
+    const inventory: Record<string, number> = {};
+    console.log("Inventory rows:", data.length);
+    res.json({ data });
+  } catch (err) {
+    res.status(500).json({ error: "DB error", details: String(err) });
+  }
 };
 
-export const updateInventory: RequestHandler = (req, res) => {
+// Cập nhật inventory vào DB
+export const updateInventory: RequestHandler = async (req, res) => {
   const { updates } = req.body as { updates?: Record<string, unknown> };
-
   if (!updates || typeof updates !== "object") {
     return res.status(400).json({ error: "Invalid updates payload" });
   }
 
   const applied: Record<string, number> = {};
-  for (const [key, value] of Object.entries(updates)) {
-    const keyStr = String(key);
-    const qtyNum =
-      typeof value === "string" ? Number(value) : (value as number);
+  try {
+    for (const [key, value] of Object.entries(updates)) {
+      const [cardId, rarity = "N/A"] = key.split("::");
+      const qtyNum =
+        typeof value === "string" ? Number(value) : (value as number);
 
-    if (!keyStr || typeof keyStr !== "string") continue;
-    if (!Number.isFinite(qtyNum) || qtyNum < 0) continue;
+      if (!cardId || !Number.isFinite(qtyNum) || qtyNum < 0) continue;
+      const quantity = Math.floor(qtyNum);
 
-    const quantity = Math.floor(qtyNum);
-    inventoryStore[keyStr] = quantity;
-    applied[keyStr] = quantity;
+      // Upsert inventory
+      await executeDb(
+        `INSERT INTO inventory (card_id, rarity, quantity)
+         VALUES ($1, $2, $3)
+         ON CONFLICT (card_id, rarity)
+         DO UPDATE SET quantity = $3`,
+        [cardId, rarity, quantity]
+      );
+      applied[key] = quantity;
+    }
+    // Trả về inventory mới
+    const rows = await queryDb("SELECT card_id, rarity, quantity FROM inventory");
+    const inventory: Record<string, number> = {};
+    for (const row of rows) {
+      const key = `${row.card_id}::${row.rarity || "N/A"}`;
+      inventory[key] = row.quantity;
+    }
+    res.json({ success: true, inventory, applied });
+  } catch (err) {
+    res.status(500).json({ error: "DB error", details: String(err) });
   }
-
-  res.json({ success: true, inventory: inventoryStore, applied });
 };

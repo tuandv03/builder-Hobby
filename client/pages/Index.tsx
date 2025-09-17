@@ -46,7 +46,9 @@ export default function Index() {
   const heroCard =
     cards.find((card) => card.id == 89943723) ||
     cards[0];
-    console.log(heroCard.name+ '_' +heroCard.id);
+  if (heroCard) {
+    console.log(`${heroCard.name}_${heroCard.id}`);
+  }
 
   // Back to top handler
   const handleBackToTop = () => {

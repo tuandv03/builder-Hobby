@@ -2,18 +2,22 @@ import { RequestHandler } from "express";
 import { queryDb, executeDb } from "../services/serviceBase";
 
 // Lấy inventory từ DB
-export const getInventory: RequestHandler = async (_req, res) => {
+export const getInventory: RequestHandler = async (req, res) => {
   try {
-   // console.log("Fetching inventory from DB");
-    const data = await queryDb(`SELECT  c.card_code , c.card_name,c.set_rarity_code 
-             ,c.set_rarity   ,cs.quantity ,c.card_name||'_'||c.card_id AS card_url
-            FROM  cardinventory cs
-            LEFT JOIN cardsets c ON cs.cardset_id = c.id  
-            where c.set_code = 'RA04' AND c.set_rarity LIKE 'Qua%'
-            ORDER BY  c.set_rarity_code,c.card_name `);
-    // Trả về dạng object: { "cardId::rarity": quantity }
-    const inventory: Record<string, number> = {};
-    console.log("Inventory rows:", data.length);
+    const { card_id, id } = req.query as { card_id?: string; id?: string };
+    const cardId = id || card_id || null;
+    const data = await queryDb(
+      `SELECT
+         c.set_code,
+         c.card_name,
+         c.set_rarity AS rarity,
+         cs.quantity
+       FROM cardinventory cs
+       LEFT JOIN cardsets c ON cs.cardset_id = c.id
+       WHERE ($1::int IS NULL OR c.card_id = $1)
+       ORDER BY c.set_code, c.card_name`,
+      [cardId ? Number(cardId) : null]
+    );
     res.json({ data });
   } catch (err) {
     res.status(500).json({ error: "DB error", details: String(err) });

@@ -257,7 +257,18 @@ export default function Admin() {
           </CardContent>
         </Card>
 
-        <div className="mt-6 grid gap-6 md:grid-cols-2">
+        <div className="mt-6 space-y-6">
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="font-semibold mb-2">Xem JSON (mẫu)</h2>
+              <ScrollArea className="h-80 rounded border p-3 bg-muted/20">
+                <pre className="text-xs whitespace-pre-wrap break-all">
+                  {JSON.stringify(sample, null, 2)}
+                </pre>
+              </ScrollArea>
+            </CardContent>
+          </Card>
+
           <Card>
             <CardContent className="pt-6">
               <h2 className="font-semibold mb-2">Kết quả</h2>
@@ -276,6 +287,7 @@ export default function Admin() {
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead className="w-[80px]">Image</TableHead>
                           <TableHead className="w-[100px]">ID</TableHead>
                           <TableHead>Tên</TableHead>
                           <TableHead>Loại</TableHead>
@@ -284,8 +296,23 @@ export default function Admin() {
                       <TableBody>
                         {sample.map((c) => (
                           <TableRow key={c.id}>
-                            <TableCell>{c.card_sets.find(s=>s.set_code.indexOf(extraParams) > 0)?.set_code}</TableCell>
-                            <TableCell>{c.name}</TableCell>
+                            <TableCell>
+                              {c.card_images && c.card_images[0] ? (
+                                <img
+                                  src={c.card_images[0].image_url_small || c.card_images[0].image_url}
+                                  alt={c.name}
+                                  className="h-16 w-auto rounded border object-cover"
+                                />
+                              ) : (
+                                <div className="h-16 w-12 bg-muted rounded" />
+                              )}
+                            </TableCell>
+                            <TableCell>{c.id}</TableCell>
+                            <TableCell>
+                              <Link to={`/card/${c.id}`} className="text-primary hover:underline">
+                                {c.name}
+                              </Link>
+                            </TableCell>
                             <TableCell>{c.type}</TableCell>
                           </TableRow>
                         ))}
@@ -296,17 +323,6 @@ export default function Admin() {
               ) : (
                 <p className="text-muted-foreground">Chưa có dữ liệu.</p>
               )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardContent className="pt-6">
-              <h2 className="font-semibold mb-2">Xem JSON (mẫu)</h2>
-              <ScrollArea className="h-80 rounded border p-3 bg-muted/20">
-                <pre className="text-xs whitespace-pre-wrap break-all">
-                  {JSON.stringify(sample, null, 2)}
-                </pre>
-              </ScrollArea>
             </CardContent>
           </Card>
         </div>

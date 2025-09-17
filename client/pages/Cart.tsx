@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Input } from "@/components/ui/input";
 import { Loader2, Trash2, CheckCircle2 } from "lucide-react";
 import { getCart, setQty, removeFromCart, clearCart, type CartItem } from "@/lib/cart";
+import { Link } from "react-router-dom";
 
 interface PriceInfo { id: number; name: string; image: string | null; prices?: { tcgplayer_price?: string } }
 
@@ -127,7 +128,11 @@ export default function Cart() {
                               <div className="h-16 w-12 bg-muted rounded" />
                             )}
                           </TableCell>
-                          <TableCell>{info?.name || it.id}</TableCell>
+                          <TableCell>
+                            <Link to={`/card/${it.id}`} className="text-primary hover:underline">
+                              {info?.name || it.id}
+                            </Link>
+                          </TableCell>
                           <TableCell>
                             <Input type="number" min={1} value={it.qty} onChange={(e) => handleQty(it.id, Math.max(1, Number(e.target.value)))} className="w-20" />
                           </TableCell>

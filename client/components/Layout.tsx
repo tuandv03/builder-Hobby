@@ -14,7 +14,31 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [cartCount, setCartCount] = useState<number>(0);
   const location = useLocation();
+
+  useEffect(() => {
+    // init
+    setCartCount(getCount());
+    const onChanged = (e: Event) => {
+      try {
+        const detail = (e as CustomEvent).detail as { count?: number };
+        if (detail && typeof detail.count === "number") setCartCount(detail.count);
+        else setCartCount(getCount());
+      } catch {
+        setCartCount(getCount());
+      }
+    };
+    const onStorage = (ev: StorageEvent) => {
+      if (ev.key === "cart_items") setCartCount(getCount());
+    };
+    window.addEventListener("cart:changed", onChanged as EventListener);
+    window.addEventListener("storage", onStorage);
+    return () => {
+      window.removeEventListener("cart:changed", onChanged as EventListener);
+      window.removeEventListener("storage", onStorage);
+    };
+  }, []);
 
   const navItems = [
     { href: "/", label: "Home", active: location.pathname === "/" },

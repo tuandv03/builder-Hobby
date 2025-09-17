@@ -40,6 +40,24 @@ export default function CardDetail() {
     }
   }, [id]);
 
+  useEffect(() => {
+    const loadInv = async (cardId: number) => {
+      try {
+        setInvLoading(true);
+        setInvError(null);
+        const res = await fetch(`/api/inventory?card_id=${encodeURIComponent(String(cardId))}`);
+        if (!res.ok) throw new Error("Failed to load inventory");
+        const data = await res.json();
+        setInv(Array.isArray(data.data) ? data.data as InvRow[] : []);
+      } catch (e) {
+        setInvError(e instanceof Error ? e.message : "Failed to load inventory");
+      } finally {
+        setInvLoading(false);
+      }
+    };
+    if (card?.id) loadInv(card.id);
+  }, [card?.id]);
+
   const fetchCard = async (cardId: string) => {
     try {
       setLoading(true);

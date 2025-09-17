@@ -47,10 +47,13 @@ export const getCards: RequestHandler = async (req, res) => {
 
 export const getCardById: RequestHandler = async (req, res) => {
   try {
-    const {id} = req.query as { id?: string };
+    const { id } = req.query as { id?: string };
     if (!id) return res.status(400).json({ error: "Missing id" });
-      const data = await queryDb(`WITH img AS (
-    SELECT 
+
+    // Try DB first (if configured)
+    const data = await queryDb(
+      `WITH img AS (
+    SELECT
         c2.card_id,
         JSON_AGG(
             JSON_BUILD_OBJECT(
@@ -63,7 +66,7 @@ export const getCardById: RequestHandler = async (req, res) => {
     ORDER BY c2.image_id
 ),
 sets AS (
-    SELECT 
+    SELECT
         c3.card_id,
         JSON_AGG(
             JSON_BUILD_OBJECT(
@@ -76,7 +79,7 @@ sets AS (
     GROUP BY c3.card_id
     ORDER BY c3.set_id, c3.set_rarity_code
 )
-SELECT 
+SELECT
     c.id,
     c."name",
     c."type",
@@ -94,11 +97,23 @@ SELECT
   FROM cards c
   LEFT JOIN img ON img.card_id = c.id
   LEFT JOIN sets ON sets.card_id = c.id
-  WHERE c.id = $1; `, [id]
-      );         
-  
-      res.json({data});
+  WHERE c.id = $1; `,
+      [id]
+    );
+
+    if (Array.isArray(data) && data.length > 0) {
+      return res.json({ data });
+    }
+
+    // Fallback to upstream API
+    const url = `${YGO_BASE}/cardinfo.php?id=${encodeURIComponent(id)}`;
+    const response = await withTimeout(fetch(url, { headers: { accept: "application/json" } }));
+    if (!response.ok) {
+      return res.status(404).json({ error: "Card not found" });
+    }
+    const upstream = await response.json();
+    return res.json(upstream);
   } catch (err) {
-    res.status(502).json({ error:  String(err) });
+    res.status(502).json({ error: String(err) });
   }
 };

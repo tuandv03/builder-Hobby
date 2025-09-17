@@ -22,6 +22,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Loader2, Download } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ApiResponse, YugiohCard } from "@shared/types";
+import { Link } from "react-router-dom";
 
 type QueryOption = {
   key: string;

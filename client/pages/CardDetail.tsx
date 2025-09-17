@@ -128,8 +128,8 @@ export default function CardDetail() {
           <div className="space-y-4">
             <div className="relative aspect-[2/3] max-w-md mx-auto lg:mx-0">
               <img
-                src={
-                  `/images/${card.name}_${card.id}.jpg` || "/placeholder.svg"
+                src={`${card.card_images[0].image_url}.jpg`
+                 // `/images/${card.name}_${card.id}.jpg` || "/placeholder.svg"
                 }
                 alt={card.name}
                 className="w-full h-full object-cover rounded-lg shadow-xl card-shine"
@@ -139,10 +139,10 @@ export default function CardDetail() {
             {/* Additional Images */}
             {card.card_images.length > 1 && (
               <div className="flex gap-2 justify-center lg:justify-start">
-                {card.card_images.slice(1, 4).map((image, index) => (
+                {card.card_images.slice(1,4).map((image, index) => (
                   <img
                     key={index}
-                    src={image.image_url_small}
+                    src={`${image.image_url_small}.jpg`}
                     alt={`${card.name} variant ${index + 1}`}
                     className="w-16 h-24 object-cover rounded border hover:border-primary cursor-pointer transition-colors"
                   />
@@ -276,16 +276,11 @@ export default function CardDetail() {
                         <div>
                           <h4 className="font-medium">{set.set_name}</h4>
                           <p className="text-sm text-muted-foreground">
-                            {set.set_code}
+                            {set.card_code}
                           </p>
-                        </div>
+                        </div>                        
                         <div className="text-right">
                           <Badge variant="outline">{set.set_rarity}</Badge>
-                          {set.set_price && (
-                            <p className="text-sm font-medium mt-1">
-                              {formatPrice(set.set_price)}
-                            </p>
-                          )}
                         </div>
                       </div>
                     ))}
@@ -299,42 +294,7 @@ export default function CardDetail() {
             </Card>
           </TabsContent>
 
-          <TabsContent value="prices" className="space-y-4">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="w-5 h-5" />
-                  Market Prices
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                {card.card_prices && card.card_prices[0] ? (
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {Object.entries(card.card_prices[0]).map(
-                      ([market, price]) => (
-                        <div
-                          key={market}
-                          className="flex justify-between items-center p-3 border rounded-lg"
-                        >
-                          <span className="font-medium capitalize">
-                            {market.replace("_price", "").replace("_", " ")}
-                          </span>
-                          <span className="font-bold">
-                            {formatPrice(price)}
-                          </span>
-                        </div>
-                      ),
-                    )}
-                  </div>
-                ) : (
-                  <p className="text-muted-foreground">
-                    No pricing information available.
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          </TabsContent>
-
+         
           <TabsContent value="info" className="space-y-4">
             <Card>
               <CardHeader>

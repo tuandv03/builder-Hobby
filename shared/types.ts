@@ -21,6 +21,9 @@ export interface CardSet {
   set_rarity: string;
   set_rarity_code: string;
   set_price: string;
+  card_code: string;
+  card_name: string;
+  card_id: number;
 }
 
 export interface CardImage {

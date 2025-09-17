@@ -27,6 +27,10 @@ export function getCart(): CartItem[] {
   return read();
 }
 
+export function getCount(): number {
+  return read().reduce((s, i) => s + i.qty, 0);
+}
+
 export function addToCart(id: number, qty = 1) {
   const items = read();
   const idx = items.findIndex((i) => i.id === id);

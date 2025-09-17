@@ -112,13 +112,14 @@ function buildQueryString(base: Record<string, string>, extra: string): string {
   // Parse extraParams thành object
   const extraObj: Record<string, string> = {};
   const extraTrim = extra.trim();
-  
+  //console.log("extraTrim", extraTrim);
   if (extraTrim) {
     for (const pair of extraTrim.split("&")) {
       const [k, v = ""] = pair.split("=");
       const key = k?.trim();
       if (!key) continue;
       extraObj[key] = decodeURIComponent(v);
+      //console.log("pair", pair, key, v,decodeURIComponent(v));
     }
   }
   // Chỉ lấy key từ base, value từ extraObj (nếu có)

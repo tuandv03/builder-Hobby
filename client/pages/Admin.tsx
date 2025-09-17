@@ -54,8 +54,8 @@ const OPTIONS: QueryOption[] = [
   },
   {
     key: "mrDark",
-    label: "Get all Dark attribute monsters from the Metal Raiders set",
-    params: { cardset: "metal raiders", attribute: "dark" },
+    label: "Get all card from set",
+    params: { cardset: "" },
   },
   {
     key: "wizardLightSpellcaster",
@@ -109,17 +109,29 @@ const OPTIONS: QueryOption[] = [
 ];
 
 function buildQueryString(base: Record<string, string>, extra: string): string {
-  const params = new URLSearchParams();
-  Object.entries(base).forEach(([k, v]) => params.append(k, v));
+  // Parse extraParams thành object
+  const extraObj: Record<string, string> = {};
   const extraTrim = extra.trim();
+  //console.log("extraTrim", extraTrim);
   if (extraTrim) {
     for (const pair of extraTrim.split("&")) {
       const [k, v = ""] = pair.split("=");
       const key = k?.trim();
       if (!key) continue;
-      params.append(key, decodeURIComponent(v));
+      extraObj[key] = decodeURIComponent(v);
+      //console.log("pair", pair, key, v,decodeURIComponent(v));
     }
   }
+  // Chỉ lấy key từ base, value từ extraObj (nếu có)
+  const params = new URLSearchParams();
+  Object.keys(base).forEach((k) => {
+    params.append(k, extraTrim);
+  });
+  // // Nếu extraObj có key không nằm trong base, cũng thêm vào
+  // Object.entries(extraObj).forEach(([k, v]) => {
+  //   if (!(k in base)) params.append(k, v);
+  // });
+//  params.append("", extraTrim);
   return params.toString();
 }
 
@@ -148,6 +160,7 @@ export default function Admin() {
       setLoading(true);
       setError(null);
       setCards(null);
+      const valueParams = fetch("/api/cardsets");
       const res = await fetch(endpointPreview.api);
       if (!res.ok) throw new Error(`Request failed (${res.status})`);
       const data: ApiResponse = await res.json();
@@ -270,7 +283,7 @@ export default function Admin() {
                       <TableBody>
                         {sample.map((c) => (
                           <TableRow key={c.id}>
-                            <TableCell>{c.id}</TableCell>
+                            <TableCell>{c.card_sets.find(s=>s.set_code.indexOf(extraParams) > 0)?.set_code}</TableCell>
                             <TableCell>{c.name}</TableCell>
                             <TableCell>{c.type}</TableCell>
                           </TableRow>

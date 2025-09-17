@@ -51,8 +51,7 @@ export default function CardItem({ card, className }: CardItemProps) {
         <div className="relative aspect-[2/3] overflow-hidden">
           <img
             src={
-              card.card_images[0]?.image_url_small ||
-              card.card_images[0]?.image_url ||
+              `/images/${card.name}_${card.id}.jpg` ||
               "/placeholder.svg"
             }
             alt={card.name}
@@ -62,7 +61,7 @@ export default function CardItem({ card, className }: CardItemProps) {
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
           {/* Floating badges */}
-          <div className="absolute top-2 left-2 space-y-1">
+          {/* <div className="absolute top-2 left-2 space-y-1">
             <Badge
               className={cn("text-xs font-medium", getCardTypeColor(card.type))}
             >
@@ -73,7 +72,7 @@ export default function CardItem({ card, className }: CardItemProps) {
                 {card.archetype}
               </Badge>
             )}
-          </div>
+          </div>  */}
 
           {/* Price tag */}
           {mainPrice && (

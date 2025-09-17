@@ -27,7 +27,7 @@ export default function Index() {
   const fetchBlueEyesCards = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/cards?archetype=Blue-Eyes");
+      const response = await fetch("/api/cards?archetype=Elemental HERO");
 
       if (!response.ok) {
         throw new Error("Failed to fetch cards");
@@ -44,8 +44,9 @@ export default function Index() {
 
   const featuredCards = cards.slice(0, 12);
   const heroCard =
-    cards.find((card) => card.name.includes("Blue-Eyes White Dragon")) ||
+    cards.find((card) => card.id == 89943723) ||
     cards[0];
+    console.log(heroCard.name+ '_' +heroCard.id);
 
   // Back to top handler
   const handleBackToTop = () => {
@@ -66,12 +67,12 @@ export default function Index() {
                   Premium Collection
                 </Badge>
                 <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
-                  Master the <span className="text-primary">Blue-Eyes</span>{" "}
+                  Master the <span className="text-primary">HERO</span>{" "}
                   Legacy
                 </h1>
               </div>
               <p className="text-xl text-muted-foreground max-w-md">
-                Discover the most powerful and iconic Blue-Eyes archetype cards.
+                Discover the most powerful and iconic HERO archetype cards.
                 From legendary dragons to support spells, build your ultimate
                 deck.
               </p>
@@ -94,7 +95,7 @@ export default function Index() {
                     {cards.length}
                   </div>
                   <div className="text-sm text-muted-foreground">
-                    Blue-Eyes Cards
+                    HERO Cards
                   </div>
                 </div>
                 <div className="text-center">
@@ -117,11 +118,7 @@ export default function Index() {
                   <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl transform rotate-3 scale-105"></div>
                   <div className="relative bg-background rounded-2xl p-6 card-shine">
                     <img
-                      src={
-                        heroCard.card_images[0]?.image_url_small ||
-                        heroCard.card_images[0]?.image_url ||
-                        "/placeholder.svg"
-                      }
+                      src={`/images/${heroCard.name}_${heroCard.id}.jpg`}
                       alt={heroCard.name}
                       className="w-full max-w-sm mx-auto rounded-lg shadow-2xl"
                     />
@@ -142,11 +139,11 @@ export default function Index() {
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold mb-4">
-              Featured Blue-Eyes Cards
+              Featured HERO Cards
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
               Explore the most powerful and sought-after cards from the
-              Blue-Eyes archetype. Each card is carefully selected for its
+              HERO archetype. Each card is carefully selected for its
               strategic value and collector appeal.
             </p>
           </div>
@@ -156,7 +153,7 @@ export default function Index() {
               <div className="text-center">
                 <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
                 <p className="text-muted-foreground">
-                  Loading Blue-Eyes cards...
+                  Loading HERO cards...
                 </p>
               </div>
             </div>
@@ -193,7 +190,7 @@ export default function Index() {
             <div className="text-center">
               <Button asChild size="lg" variant="outline">
                 <Link to="/cards">
-                  View All {cards.length} Blue-Eyes Cards
+                  View All {cards.length} HERO Cards
                   <Package className="w-4 h-4 ml-2" />
                 </Link>
               </Button>

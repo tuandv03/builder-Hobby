@@ -213,7 +213,13 @@ export default function CardDetail() {
 
             {/* Actions */}
             <div className="flex flex-wrap gap-3">
-              <Button size="lg" className="flex-1 min-w-fit">
+              <Button size="lg" className="flex-1 min-w-fit" onClick={async () => {
+                if (!card) return;
+                const { addToCart } = await import("@/lib/cart");
+                addToCart(card.id, 1);
+                // Optional: navigate to cart
+                // window.location.href = "/cart";
+              }}>
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 Add to Cart
               </Button>

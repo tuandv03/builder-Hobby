@@ -4,6 +4,8 @@ import cors from "cors";
 import { handleDemo } from "./routes/demo";
 import { getInventory, updateInventory } from "./routes/inventory";
 import { getCards, getCardById } from "./routes/cards";
+import { getPrice } from "./routes/pricing";
+import { createOrder } from "./routes/order";
 
 export function createServer() {
   const app = express();
@@ -28,6 +30,10 @@ export function createServer() {
   // Proxy YGO API
   app.get("/api/cards", getCards);
   app.get("/api/card", getCardById);
+  app.get("/api/price", getPrice);
+
+  // Orders
+  app.post("/api/order", createOrder);
 
   return app;
 }

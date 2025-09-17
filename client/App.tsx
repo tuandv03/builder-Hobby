@@ -17,6 +17,7 @@ import Admin from "./pages/Admin";
 import Order from "./pages/Order";
 import CardInput from "./pages/CardMarket/CardInput";
 import CardPrice from "./pages/CardMarket/CardPrice";
+import Cart from "./pages/Cart";
 
 const queryClient = new QueryClient();
 
@@ -35,6 +36,7 @@ const App = () => (
           <Route path="/inventory" element={<Inventory />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/order" element={<Order />} />
+          <Route path="/cart" element={<Cart />} />
           <Route path="/cardInput" element={<CardInput />} />
           <Route path="/cardPrice" element={<CardPrice />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

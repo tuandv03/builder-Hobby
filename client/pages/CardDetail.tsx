@@ -342,7 +342,7 @@ export default function CardDetail() {
               <CardContent>
                 {card.card_sets && card.card_sets.length > 0 ? (
                   <div className="space-y-3">
-                    {card.card_sets.map((set, index) => (
+                    {(showAllSets ? card.card_sets : card.card_sets.slice(0, 5)).map((set, index) => (
                       <div
                         key={index}
                         className="flex items-center justify-between p-3 border rounded-lg"
@@ -352,12 +352,26 @@ export default function CardDetail() {
                           <p className="text-sm text-muted-foreground">
                             {set.card_code}
                           </p>
-                        </div>                        
+                        </div>
                         <div className="text-right">
                           <Badge variant="outline">{set.set_rarity}</Badge>
                         </div>
                       </div>
                     ))}
+                    {card.card_sets.length > 5 && !showAllSets && (
+                      <div className="pt-2">
+                        <Button variant="outline" size="sm" onClick={() => setShowAllSets(true)}>
+                          Hiển thị thêm
+                        </Button>
+                      </div>
+                    )}
+                    {card.card_sets.length > 5 && showAllSets && (
+                      <div className="pt-2">
+                        <Button variant="ghost" size="sm" onClick={() => setShowAllSets(false)}>
+                          Thu gọn
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   <p className="text-muted-foreground">

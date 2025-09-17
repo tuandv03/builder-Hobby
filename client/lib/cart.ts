@@ -10,8 +10,17 @@ function read(): CartItem[] {
   }
 }
 
+function emit(items: CartItem[]) {
+  try {
+    const count = items.reduce((s, i) => s + i.qty, 0);
+    const event = new CustomEvent("cart:changed", { detail: { items, count } });
+    window.dispatchEvent(event);
+  } catch {}
+}
+
 function write(items: CartItem[]) {
   localStorage.setItem(KEY, JSON.stringify(items));
+  emit(items);
 }
 
 export function getCart(): CartItem[] {

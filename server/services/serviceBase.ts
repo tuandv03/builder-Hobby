@@ -18,21 +18,31 @@ function getPool(): Pool | null {
 function getSslOption(): any {
   // Allow non-SSL by default unless explicitly required in env
   const ssl = process.env.PGSSL?.toLowerCase();
-  if (ssl === "require" || ssl === "true" || ssl === "1") return { rejectUnauthorized: false };
+  if (ssl === "require" || ssl === "true" || ssl === "1")
+    return { rejectUnauthorized: false };
   return undefined as any;
 }
 
-export async function queryDb<T = any>(sql: string, params: any[] = []): Promise<T[]> {
+export async function queryDb<T = any>(
+  sql: string,
+  params: any[] = [],
+): Promise<T[]> {
   const p = getPool();
   if (!p) {
-    console.warn("queryDb called without DATABASE_URL; returning empty result.", { sql });
+    console.warn(
+      "queryDb called without DATABASE_URL; returning empty result.",
+      { sql },
+    );
     return [] as T[];
   }
   const res = await p.query(sql, params);
   return res.rows as T[];
 }
 
-export async function executeDb(sql: string, params: any[] = []): Promise<{ rowCount: number }>{
+export async function executeDb(
+  sql: string,
+  params: any[] = [],
+): Promise<{ rowCount: number }> {
   const p = getPool();
   if (!p) {
     console.warn("executeDb called without DATABASE_URL; no-op.", { sql });

@@ -98,7 +98,7 @@ SELECT
   LEFT JOIN img ON img.card_id = c.id
   LEFT JOIN sets ON sets.card_id = c.id
   WHERE c.id = $1; `,
-      [id]
+      [id],
     );
 
     if (Array.isArray(data) && data.length > 0) {
@@ -107,7 +107,9 @@ SELECT
 
     // Fallback to upstream API
     const url = `${YGO_BASE}/cardinfo.php?id=${encodeURIComponent(id)}`;
-    const response = await withTimeout(fetch(url, { headers: { accept: "application/json" } }));
+    const response = await withTimeout(
+      fetch(url, { headers: { accept: "application/json" } }),
+    );
     if (!response.ok) {
       return res.status(404).json({ error: "Card not found" });
     }

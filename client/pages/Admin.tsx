@@ -132,7 +132,7 @@ function buildQueryString(base: Record<string, string>, extra: string): string {
   // Object.entries(extraObj).forEach(([k, v]) => {
   //   if (!(k in base)) params.append(k, v);
   // });
-//  params.append("", extraTrim);
+  //  params.append("", extraTrim);
   return params.toString();
 }
 
@@ -299,7 +299,10 @@ export default function Admin() {
                             <TableCell>
                               {c.card_images && c.card_images[0] ? (
                                 <img
-                                  src={c.card_images[0].image_url_small || c.card_images[0].image_url}
+                                  src={
+                                    c.card_images[0].image_url_small ||
+                                    c.card_images[0].image_url
+                                  }
                                   alt={c.name}
                                   className="h-16 w-auto rounded border object-cover"
                                 />
@@ -309,7 +312,10 @@ export default function Admin() {
                             </TableCell>
                             <TableCell>{c.id}</TableCell>
                             <TableCell>
-                              <Link to={`/card/${c.id}`} className="text-primary hover:underline">
+                              <Link
+                                to={`/card/${c.id}`}
+                                className="text-primary hover:underline"
+                              >
                                 {c.name}
                               </Link>
                             </TableCell>

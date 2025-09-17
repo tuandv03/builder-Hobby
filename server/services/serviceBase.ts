@@ -11,11 +11,11 @@ type QueryParams = any[] | Record<string, any>;
 
 function buildQuery(sql: string, params: QueryParams): { sql: string; values: any[] } {
   if (Array.isArray(params)) {
-    // DÃ¹ng trá»±c tiáº¿p náº¿u params lÃ  array
+    // Dùng tr?c ti?p n?u params là array
     return { sql, values: params };
   }
 
-  // Náº¿u params lÃ  object => map thÃ nh array + thay key thÃ nh $n
+  // N?u params là object => map thành array + thay key thành $n
   const keys = Object.keys(params);
   const values = keys.map(k => params[k]);
 

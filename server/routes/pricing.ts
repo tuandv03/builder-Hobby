@@ -22,19 +22,29 @@ export const getPrice: RequestHandler = async (req, res) => {
     if (!id) return res.status(400).json({ error: "Missing id" });
 
     const url = `${YGO_BASE}/cardinfo.php?id=${encodeURIComponent(id)}`;
-    const response = await withTimeout(fetch(url, { headers: { accept: "application/json" } }));
+    const response = await withTimeout(
+      fetch(url, { headers: { accept: "application/json" } }),
+    );
     if (!response.ok) {
-      return res.status(502).json({ error: "Upstream error", status: response.status });
+      return res
+        .status(502)
+        .json({ error: "Upstream error", status: response.status });
     }
     const data = await response.json();
     const card = (data?.data && data.data[0]) || null;
     if (!card) return res.status(404).json({ error: "Card not found" });
 
-    const price = Array.isArray(card.card_prices) && card.card_prices.length > 0 ? card.card_prices[0] : null;
+    const price =
+      Array.isArray(card.card_prices) && card.card_prices.length > 0
+        ? card.card_prices[0]
+        : null;
     res.json({
       id: card.id,
       name: card.name,
-      image: card.card_images?.[0]?.image_url_small || card.card_images?.[0]?.image_url || null,
+      image:
+        card.card_images?.[0]?.image_url_small ||
+        card.card_images?.[0]?.image_url ||
+        null,
       prices: price,
     });
   } catch (err) {

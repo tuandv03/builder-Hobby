@@ -43,9 +43,7 @@ export default function Index() {
   };
 
   const featuredCards = cards.slice(0, 12);
-  const heroCard =
-    cards.find((card) => card.id == 89943723) ||
-    cards[0];
+  const heroCard = cards.find((card) => card.id == 89943723) || cards[0];
 
   // Back to top handler
   const handleBackToTop = () => {
@@ -66,14 +64,12 @@ export default function Index() {
                   Premium Collection
                 </Badge>
                 <h1 className="text-4xl lg:text-6xl font-bold tracking-tight">
-                  Master the <span className="text-primary">HERO</span>{" "}
-                  Legacy
+                  Master the <span className="text-primary">HERO</span> Legacy
                 </h1>
               </div>
               <p className="text-xl text-muted-foreground max-w-md">
-                Discover the most powerful and iconic HERO archetype cards.
-                From legendary dragons to support spells, build your ultimate
-                deck.
+                Discover the most powerful and iconic HERO archetype cards. From
+                legendary dragons to support spells, build your ultimate deck.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button size="lg" asChild className="group">
@@ -137,13 +133,11 @@ export default function Index() {
       <section className="py-16 bg-muted/30">
         <div className="container mx-auto px-4">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">
-              Featured HERO Cards
-            </h2>
+            <h2 className="text-3xl font-bold mb-4">Featured HERO Cards</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Explore the most powerful and sought-after cards from the
-              HERO archetype. Each card is carefully selected for its
-              strategic value and collector appeal.
+              Explore the most powerful and sought-after cards from the HERO
+              archetype. Each card is carefully selected for its strategic value
+              and collector appeal.
             </p>
           </div>
 
@@ -151,9 +145,7 @@ export default function Index() {
             <div className="flex items-center justify-center py-16">
               <div className="text-center">
                 <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-primary" />
-                <p className="text-muted-foreground">
-                  Loading HERO cards...
-                </p>
+                <p className="text-muted-foreground">Loading HERO cards...</p>
               </div>
             </div>
           )}

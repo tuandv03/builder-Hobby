@@ -23,7 +23,8 @@ export default function Layout({ children }: LayoutProps) {
     const onChanged = (e: Event) => {
       try {
         const detail = (e as CustomEvent).detail as { count?: number };
-        if (detail && typeof detail.count === "number") setCartCount(detail.count);
+        if (detail && typeof detail.count === "number")
+          setCartCount(detail.count);
         else setCartCount(getCount());
       } catch {
         setCartCount(getCount());

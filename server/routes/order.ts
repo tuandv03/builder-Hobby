@@ -6,7 +6,9 @@ const memoryOrders: any[] = [];
 
 export const createOrder: RequestHandler = async (req, res) => {
   try {
-    const { items } = req.body as { items?: Array<{ id: number; qty: number; price?: number }>; };
+    const { items } = req.body as {
+      items?: Array<{ id: number; qty: number; price?: number }>;
+    };
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({ error: "Invalid items" });
     }
@@ -16,15 +18,12 @@ export const createOrder: RequestHandler = async (req, res) => {
     // Attempt to persist to DB if available (tables may not exist; swallow errors)
     try {
       // Create order record
-      await executeDb(
-        `INSERT INTO orders(created_at) VALUES ($1)`,
-        [now]
-      );
+      await executeDb(`INSERT INTO orders(created_at) VALUES ($1)`, [now]);
       // Save each item
       for (const it of items) {
         await executeDb(
           `INSERT INTO order_items(card_id, quantity, price, created_at) VALUES ($1, $2, $3, $4)`,
-          [it.id, it.qty, it.price ?? null, now]
+          [it.id, it.qty, it.price ?? null, now],
         );
       }
       return res.json({ success: true, stored: "db" });

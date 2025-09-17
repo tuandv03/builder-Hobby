@@ -17,13 +17,17 @@ function getPool(): Pool | null {
 
 function getSslOption(): any {
   const ssl = process.env.PGSSL?.toLowerCase();
-  if (ssl === "require" || ssl === "true" || ssl === "1") return { rejectUnauthorized: false };
+  if (ssl === "require" || ssl === "true" || ssl === "1")
+    return { rejectUnauthorized: false };
   return undefined as any;
 }
 
 type QueryParams = any[] | Record<string, any>;
 
-function buildQuery(sql: string, params: QueryParams): { sql: string; values: any[] } {
+function buildQuery(
+  sql: string,
+  params: QueryParams,
+): { sql: string; values: any[] } {
   if (Array.isArray(params)) return { sql, values: params };
   const keys = Object.keys(params);
   const values = keys.map((k) => (params as any)[k]);
@@ -35,10 +39,16 @@ function buildQuery(sql: string, params: QueryParams): { sql: string; values: an
   return { sql: newSql, values };
 }
 
-export async function queryDb<T = any>(sql: string, params: QueryParams = []): Promise<T[]> {
+export async function queryDb<T = any>(
+  sql: string,
+  params: QueryParams = [],
+): Promise<T[]> {
   const p = getPool();
   if (!p) {
-    console.warn("queryDb called without DATABASE_URL; returning empty result.", { sql });
+    console.warn(
+      "queryDb called without DATABASE_URL; returning empty result.",
+      { sql },
+    );
     return [] as T[];
   }
   try {
@@ -51,7 +61,10 @@ export async function queryDb<T = any>(sql: string, params: QueryParams = []): P
   }
 }
 
-export async function executeDb(sql: string, params: any[] = []): Promise<{ rowCount: number }>{
+export async function executeDb(
+  sql: string,
+  params: any[] = [],
+): Promise<{ rowCount: number }> {
   const p = getPool();
   if (!p) {
     console.warn("executeDb called without DATABASE_URL; no-op.", { sql });

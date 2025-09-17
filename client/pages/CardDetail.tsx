@@ -7,7 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Separator } from "@/components/ui/separator";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   ArrowLeft,
   Star,
@@ -28,7 +35,12 @@ export default function CardDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  type InvRow = { set_code?: string; card_name: string; rarity?: string; quantity: number };
+  type InvRow = {
+    set_code?: string;
+    card_name: string;
+    rarity?: string;
+    quantity: number;
+  };
   const [inv, setInv] = useState<InvRow[] | null>(null);
   const [invLoading, setInvLoading] = useState(false);
   const [invError, setInvError] = useState<string | null>(null);
@@ -45,12 +57,16 @@ export default function CardDetail() {
       try {
         setInvLoading(true);
         setInvError(null);
-        const res = await fetch(`/api/inventory?card_id=${encodeURIComponent(String(cardId))}`);
+        const res = await fetch(
+          `/api/inventory?card_id=${encodeURIComponent(String(cardId))}`,
+        );
         if (!res.ok) throw new Error("Failed to load inventory");
         const data = await res.json();
-        setInv(Array.isArray(data.data) ? data.data as InvRow[] : []);
+        setInv(Array.isArray(data.data) ? (data.data as InvRow[]) : []);
       } catch (e) {
-        setInvError(e instanceof Error ? e.message : "Failed to load inventory");
+        setInvError(
+          e instanceof Error ? e.message : "Failed to load inventory",
+        );
       } finally {
         setInvLoading(false);
       }
@@ -153,8 +169,9 @@ export default function CardDetail() {
           <div className="space-y-4">
             <div className="relative aspect-[2/3] max-w-md mx-auto lg:mx-0">
               <img
-                src={`${card.card_images[0].image_url}.jpg`
-                 // `/images/${card.name}_${card.id}.jpg` || "/placeholder.svg"
+                src={
+                  `${card.card_images[0].image_url}.jpg`
+                  // `/images/${card.name}_${card.id}.jpg` || "/placeholder.svg"
                 }
                 alt={card.name}
                 className="w-full h-full object-cover rounded-lg shadow-xl card-shine"
@@ -164,7 +181,7 @@ export default function CardDetail() {
             {/* Additional Images */}
             {card.card_images.length > 1 && (
               <div className="flex gap-2 justify-center lg:justify-start">
-                {card.card_images.slice(1,4).map((image, index) => (
+                {card.card_images.slice(1, 4).map((image, index) => (
                   <img
                     key={index}
                     src={`${image.image_url_small}.jpg`}
@@ -238,13 +255,17 @@ export default function CardDetail() {
 
             {/* Actions */}
             <div className="flex flex-wrap gap-3">
-              <Button size="lg" className="flex-1 min-w-fit" onClick={async () => {
-                if (!card) return;
-                const { addToCart } = await import("@/lib/cart");
-                addToCart(card.id, 1);
-                // Optional: navigate to cart
-                // window.location.href = "/cart";
-              }}>
+              <Button
+                size="lg"
+                className="flex-1 min-w-fit"
+                onClick={async () => {
+                  if (!card) return;
+                  const { addToCart } = await import("@/lib/cart");
+                  addToCart(card.id, 1);
+                  // Optional: navigate to cart
+                  // window.location.href = "/cart";
+                }}
+              >
                 <ShoppingCart className="w-4 h-4 mr-2" />
                 Add to Cart
               </Button>
@@ -342,7 +363,10 @@ export default function CardDetail() {
               <CardContent>
                 {card.card_sets && card.card_sets.length > 0 ? (
                   <div className="space-y-3">
-                    {(showAllSets ? card.card_sets : card.card_sets.slice(0, 5)).map((set, index) => (
+                    {(showAllSets
+                      ? card.card_sets
+                      : card.card_sets.slice(0, 5)
+                    ).map((set, index) => (
                       <div
                         key={index}
                         className="flex items-center justify-between p-3 border rounded-lg"
@@ -360,14 +384,22 @@ export default function CardDetail() {
                     ))}
                     {card.card_sets.length > 5 && !showAllSets && (
                       <div className="pt-2">
-                        <Button variant="outline" size="sm" onClick={() => setShowAllSets(true)}>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowAllSets(true)}
+                        >
                           Hiển thị thêm
                         </Button>
                       </div>
                     )}
                     {card.card_sets.length > 5 && showAllSets && (
                       <div className="pt-2">
-                        <Button variant="ghost" size="sm" onClick={() => setShowAllSets(false)}>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setShowAllSets(false)}
+                        >
                           Thu gọn
                         </Button>
                       </div>
@@ -382,7 +414,6 @@ export default function CardDetail() {
             </Card>
           </TabsContent>
 
-         
           <TabsContent value="info" className="space-y-4">
             <Card>
               <CardHeader>

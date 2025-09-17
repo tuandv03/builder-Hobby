@@ -16,7 +16,7 @@ export const getInventory: RequestHandler = async (req, res) => {
        LEFT JOIN cardsets c ON cs.cardset_id = c.id
        WHERE ($1::int IS NULL OR c.card_id = $1)
        ORDER BY c.set_code, c.card_name`,
-      [cardId ? Number(cardId) : null]
+      [cardId ? Number(cardId) : null],
     );
     res.json({ data });
   } catch (err) {
@@ -47,12 +47,14 @@ export const updateInventory: RequestHandler = async (req, res) => {
          VALUES ($1, $2, $3)
          ON CONFLICT (card_id, rarity)
          DO UPDATE SET quantity = $3`,
-        [cardId, rarity, quantity]
+        [cardId, rarity, quantity],
       );
       applied[key] = quantity;
     }
     // Trả về inventory mới
-    const rows = await queryDb("SELECT card_id, rarity, quantity FROM inventory");
+    const rows = await queryDb(
+      "SELECT card_id, rarity, quantity FROM inventory",
+    );
     const inventory: Record<string, number> = {};
     for (const row of rows) {
       const key = `${row.card_id}::${row.rarity || "N/A"}`;

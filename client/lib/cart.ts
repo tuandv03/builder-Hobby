@@ -40,7 +40,8 @@ export function addToCart(id: number, qty = 1) {
 }
 
 export function removeFromCart(id: number) {
-  write(read().filter((i) => i.id !== id));
+  const items = read().filter((i) => i.id !== id);
+  write(items);
 }
 
 export function setQty(id: number, qty: number) {

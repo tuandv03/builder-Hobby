@@ -1,53 +1,53 @@
 import { Pool } from "pg";
 
-let pool: Pool | null = null;
+const pool = new Pool({
+  user: "postgres",
+  host: "localhost",
+  database: "yugiohDb",
+  password: "1",
+  port: 5432,
+});
+type QueryParams = any[] | Record<string, any>;
 
-function getPool(): Pool | null {
-  try {
-    if (pool) return pool;
-    const connString = process.env.DATABASE_URL;
-    if (!connString) return null;
-    pool = new Pool({ connectionString: connString, ssl: getSslOption() });
-    return pool;
-  } catch (err) {
-    console.warn("DB pool init failed:", err);
-    return null;
+function buildQuery(sql: string, params: QueryParams): { sql: string; values: any[] } {
+  if (Array.isArray(params)) {
+    // Dùng tr?c ti?p n?u params là array
+    return { sql, values: params };
   }
-}
 
-function getSslOption(): any {
-  // Allow non-SSL by default unless explicitly required in env
-  const ssl = process.env.PGSSL?.toLowerCase();
-  if (ssl === "require" || ssl === "true" || ssl === "1")
-    return { rejectUnauthorized: false };
-  return undefined as any;
+  // N?u params là object => map thành array + thay key thành $n
+  const keys = Object.keys(params);
+  const values = keys.map(k => params[k]);
+
+  let newSql = sql;
+  keys.forEach((k, i) => {
+    const placeholder = new RegExp(`:${k}\\b`, "g"); // match :key
+    newSql = newSql.replace(placeholder, `$${i + 1}`);
+  });
+
+  return { sql: newSql, values };
 }
 
 export async function queryDb<T = any>(
   sql: string,
-  params: any[] = [],
+  params: QueryParams = []
 ): Promise<T[]> {
-  const p = getPool();
-  if (!p) {
-    console.warn(
-      "queryDb called without DATABASE_URL; returning empty result.",
-      { sql },
-    );
-    return [] as T[];
+  const client = await pool.connect();
+  try {
+    const { sql: finalSql, values } = buildQuery(sql, params);
+   // console.log("Executing SQL:", finalSql, values);
+    const result = await client.query(finalSql, values);
+    return result.rows;
+  } finally {
+    client.release();
   }
-  const res = await p.query(sql, params);
-  return res.rows as T[];
 }
 
-export async function executeDb(
-  sql: string,
-  params: any[] = [],
-): Promise<{ rowCount: number }> {
-  const p = getPool();
-  if (!p) {
-    console.warn("executeDb called without DATABASE_URL; no-op.", { sql });
-    return { rowCount: 0 };
+export async function executeDb(sql: string, params?: any[]): Promise<void> {
+  const client = await pool.connect();
+  try {
+    await client.query(sql, params);
+  } finally {
+    client.release();
   }
-  const res = await p.query(sql, params);
-  return { rowCount: res.rowCount };
 }

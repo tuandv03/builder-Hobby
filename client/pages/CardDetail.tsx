@@ -28,6 +28,12 @@ export default function CardDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  type InvRow = { set_code?: string; card_name: string; rarity?: string; quantity: number };
+  const [inv, setInv] = useState<InvRow[] | null>(null);
+  const [invLoading, setInvLoading] = useState(false);
+  const [invError, setInvError] = useState<string | null>(null);
+  const [showAllSets, setShowAllSets] = useState(false);
+
   useEffect(() => {
     if (id) {
       fetchCard(id);

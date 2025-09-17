@@ -280,6 +280,49 @@ export default function CardDetail() {
           </div>
         </div>
 
+        {/* Inventory Section */}
+        <Card className="mb-8 animate-fade-in">
+          <CardHeader>
+            <CardTitle>Hàng trong kho</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {invLoading ? (
+              <div className="flex items-center justify-center py-6">
+                <Loader2 className="w-6 h-6 animate-spin text-primary" />
+              </div>
+            ) : invError ? (
+              <p className="text-destructive">{invError}</p>
+            ) : inv && inv.length > 0 ? (
+              <div className="rounded border overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-[60px]">STT</TableHead>
+                      <TableHead>Set Code</TableHead>
+                      <TableHead>Tên</TableHead>
+                      <TableHead>Rarity</TableHead>
+                      <TableHead className="w-[100px]">Số lượng</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {inv.map((row, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell>{idx + 1}</TableCell>
+                        <TableCell>{row.set_code ?? "-"}</TableCell>
+                        <TableCell>{row.card_name}</TableCell>
+                        <TableCell>{row.rarity ?? "-"}</TableCell>
+                        <TableCell>{row.quantity}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            ) : (
+              <p className="text-muted-foreground">Không có dữ liệu tồn kho.</p>
+            )}
+          </CardContent>
+        </Card>
+
         {/* Detailed Information Tabs */}
         <Tabs defaultValue="sets" className="w-full">
           <TabsList className="grid w-full grid-cols-3">
